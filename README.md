@@ -18,7 +18,7 @@ Varioqub SDK allows is a solution from Yandex for managing a digital Product and
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/appmetrica/varioqub-sdk-ios", from: "1.0.0")
+    .package(url: "https://github.com/appmetrica/varioqub-sdk-ios", from: "1.0.0"),
 ],
 ```
 
