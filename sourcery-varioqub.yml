@@ -1,0 +1,13 @@
+sources:
+  - Sources/Varioqub
+  - Sources/VarioqubNetwork
+templates:
+  - sourcery/templates/AutoMockable.stencil
+output:
+  Tests/VarioqubTests/Sourcery
+args:
+  autoMockableImports:
+    - Foundation
+  autoMockableTestableImports:
+    - Varioqub
+    - VarioqubNetwork

@@ -1,0 +1,2 @@
+
+struct StubError: Error { }

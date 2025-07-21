@@ -1,0 +1,20 @@
+syntax = "proto2";
+option swift_prefix="PB";
+
+message Value {
+    optional string value = 1;
+    optional int64 testId = 2;
+    optional bool isNull = 3; // VARIOQUB-256
+}
+
+message Flag {
+    optional string name = 1;
+    repeated Value values = 2;
+}
+
+message Response {
+    optional string id = 1;
+    optional string experiments = 2;
+    repeated Flag flags = 3;
+    optional string config_version = 4; // VARIOQUB-589: add config version to track changes
+}
