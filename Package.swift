@@ -85,7 +85,6 @@ let targets: [Target] = [
     
     .target(
         varioqubTarget: .varioqub,
-        resources: [.process("Protobuf/proto")],
         dependencies: [.utils, .network],
         externalDependencies: [.swiftLog, .protobuf]
     ),

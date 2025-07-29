@@ -119,7 +119,7 @@ extension VarioqubFacade: RuntimeOptionable {
 
     /// Enables or disables sending event when a new config is activated.
     ///
-    /// You should provide the ``VarioqubFacade/initialize(clientId:config:idProvider:reporter:)`` reporter and implement ``VarioqubReporter/sendActivateEvent(_:)`` (for example, using AppmetricaAdapter).
+    /// You should provide the ``VarioqubFacade/initialize(clientId:config:idProvider:reporter:)`` reporter and implement ``VarioqubReporter/sendActivateEvent(_:)`` (for example, using ``VarioqubAppMetricaAdapter.AppMetricaAdapter``).
     ///
     /// See also ``VarioqubFacade/activateConfigAndWait()`` and ``VarioqubFacade/activateConfig(_:)``.
     public var sendEventOnChangeConfig: Bool {
