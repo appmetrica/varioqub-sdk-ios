@@ -90,7 +90,7 @@ final class UserDefaultsSettingsV0Tests: XCTestCase {
         doGetTest(
             key: SettingsKeysV0.networkDataPrefix + "pending",
             value: "network data".data(using: .utf8)!,
-            settingsClosure: settings.loadNetworkData(for: "pending")
+            settingsClosure: settings.loadNetworkDSOv0(for: "pending")
         )
     }
     
@@ -99,7 +99,7 @@ final class UserDefaultsSettingsV0Tests: XCTestCase {
             key: SettingsKeysV0.networkDataPrefix + "pending",
             value: "network data".data(using: .utf8)!
         ) {
-            settings.storeNetworkData($0, for: "pending")
+            settings.storeNetworkDSOv0($0, for: "pending")
         }
     }
     

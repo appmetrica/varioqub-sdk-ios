@@ -40,8 +40,8 @@ final class UserDefaultsSettingsTests: XCTestCase {
         settings.isShouldNotifyExperimentChanged = true
         settings.reporterData = Data()
         settings.lastFetchDate = Date()
-        settings.storeNetworkData(Data(), for: NetworkDataKey.pending.rawValue)
-        settings.storeNetworkData(Data(), for: NetworkDataKey.active.rawValue)
+        settings.storeNetworkDSOv0(Data(), for: NetworkDataKeyDSO.pending.rawValue)
+        settings.storeNetworkDSOv0(Data(), for: NetworkDataKeyDSO.active.rawValue)
         
         let d = userDefaultsMock.storage
         d.keys.forEach {
@@ -76,13 +76,15 @@ final class UserDefaultsSettingsTests: XCTestCase {
         testWriting { settings.lastFetchDate = Date() }
         testWriting { settings.reporterData = "reporterData".data(using: .utf8)! }
         testWriting { settings.isShouldNotifyExperimentChanged = true }
-        testWriting { settings.storeNetworkData("networkData".data(using: .utf8)!, for: NetworkDataKey.pending.rawValue) }
+        testWriting {
+            settings.storeNetworkDSOv0("networkData".data(using: .utf8)!, for: NetworkDataKeyDSO.pending.rawValue)
+        }
         
         testWriting { settings.lastEtag = nil }
         testWriting { settings.lastFetchDate = nil }
         testWriting { settings.reporterData = nil }
         testWriting { settings.isShouldNotifyExperimentChanged = false }
-        testWriting { settings.storeNetworkData(nil, for: NetworkDataKey.pending.rawValue) }
+        testWriting { settings.storeNetworkDSOv0(nil, for: NetworkDataKeyDSO.pending.rawValue) }
     }
     
     private func doGetTest<T: Equatable>(key: UserDefaultsSettingsKey, value: T, settingsClosure: @autoclosure () -> T?) {
@@ -139,13 +141,13 @@ final class UserDefaultsSettingsTests: XCTestCase {
         doGetTest(
             key: .networkData(key: "pending"),
             value: "network data".data(using: .utf8)!,
-            settingsClosure: settings.loadNetworkData(for: "pending")
+            settingsClosure: settings.loadNetworkDSOv0(for: "pending")
         )
     }
     
     func testSetNetworkData() {
         doSetTest(key: .networkData(key: "pending"), value: "network data".data(using: .utf8)!) {
-            settings.storeNetworkData($0, for: "pending")
+            settings.storeNetworkDSOv0($0, for: "pending")
         }
     }
     

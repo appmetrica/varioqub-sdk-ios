@@ -8,7 +8,7 @@ func makeVQError(error: Error) -> NSError {
     NSError(domain: error._domain, code: error._code, userInfo: error._userInfo as? [String: Any])
 }
 
-func makeVQConfigFetchError(_ error: ConfigFetcherError) -> NSError {
+func makeVQConfigFetchError(_ error: VarioqubFetchError) -> NSError {
     switch error {
     case .emptyResult:
         return NSError(domain: NSError.CONFIG_FETCH_DOMAIN, code: NSError.CONFIG_FETCH_EMPTY_RESULT_CODE)

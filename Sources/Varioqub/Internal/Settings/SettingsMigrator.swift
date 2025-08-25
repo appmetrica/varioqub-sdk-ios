@@ -15,17 +15,17 @@ final class SettingsMigrator: VariqubLoadable {
         self.output = output
     }
     
-    private func copyNetworkData(key: NetworkDataKey) {
-        let data = input.loadNetworkData(for: key.rawValue)
-        output.storeNetworkData(data, for: key.rawValue)
+    private func copyNetworkData(key: NetworkDataKeyDSO) {
+        let data = input.loadNetworkDSOv0(for: key.rawValue)
+        output.storeNetworkDSOv0(data, for: key.rawValue)
     }
     
     private func clearInputV1() {
         input.lastEtag = nil
         input.lastFetchDate = nil
         input.reporterData = nil
-        input.storeNetworkData(nil, for: NetworkDataKey.pending.rawValue)
-        input.storeNetworkData(nil, for: NetworkDataKey.active.rawValue)
+        input.storeNetworkDSOv0(nil, for: NetworkDataKeyDSO.pending.rawValue)
+        input.storeNetworkDSOv0(nil, for: NetworkDataKeyDSO.active.rawValue)
     }
     
     private func migrateToVer080() {

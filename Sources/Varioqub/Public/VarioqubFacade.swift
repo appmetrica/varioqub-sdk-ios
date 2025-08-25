@@ -107,14 +107,14 @@ extension VarioqubFacade {
 
 }
 
-extension VarioqubFacade: RuntimeOptionable {
+extension VarioqubFacade: VarioqubRuntimeOptionable {
 
     /// An additional key-value set to send to Varioqub server.
     ///
     /// No operation is performed before ``VarioqubFacade/initialize(clientId:config:idProvider:reporter:)`` is called.
-    public var clientFeatures: ClientFeatures {
-        get { return _mainContainer.internalOptions.clientFeatures }
-        set { _mainContainer.internalOptions.clientFeatures = newValue }
+    public var clientFeatures: VarioqubClientFeatures {
+        get { return _mainContainer.runtimeOptions.clientFeatures }
+        set { _mainContainer.runtimeOptions.clientFeatures = newValue }
     }
 
     /// Enables or disables sending event when a new config is activated.
@@ -123,8 +123,13 @@ extension VarioqubFacade: RuntimeOptionable {
     ///
     /// See also ``VarioqubFacade/activateConfigAndWait()`` and ``VarioqubFacade/activateConfig(_:)``.
     public var sendEventOnChangeConfig: Bool {
-        get { return _mainContainer.internalOptions.sendEventOnChangeConfig }
-        set { _mainContainer.internalOptions.sendEventOnChangeConfig = newValue }
+        get { return _mainContainer.runtimeOptions.sendEventOnChangeConfig }
+        set { _mainContainer.runtimeOptions.sendEventOnChangeConfig = newValue }
+    }
+    
+    public var runtimeParams: VarioqubParameters {
+        get { return _mainContainer.runtimeOptions.runtimeParams }
+        set { _mainContainer.runtimeOptions.runtimeParams = newValue }
     }
 
 }
@@ -266,7 +271,23 @@ extension VarioqubFacade: VarioqubDefaultsSetupable {
 
 }
 
-extension VarioqubFacade: FlagProvider {
+extension VarioqubFacade: VarioqubResourcesProvider {
+    
+    public func resource(for key: VarioqubResourceKey) -> VarioqubResource? {
+        return _mainContainer.resourcesProvider.resource(for: key)
+    }
+    
+}
+
+extension VarioqubFacade: VarioqubDeeplinkInput {
+    
+    public func handleDeeplink(_ url: URL) -> Bool {
+        fatalError()
+    }
+    
+}
+
+extension VarioqubFacade: VarioqubFlagProvider {
 
     /// All active flags.
     public var allItems: [VarioqubFlag : VarioqubConfigValue] {

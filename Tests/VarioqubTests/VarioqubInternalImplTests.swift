@@ -5,26 +5,31 @@ import VarioqubUtils
 final class VarioqubInternalImplTests: XCTestCase {
 
     var impl: VarioqubInternalImpl!
+    
     var configFetcher: ConfigFetchableMock!
-    var flagUpdater: ConfigUpdaterInputMock!
-    var flagResolver: ConfigUpdaterControllableMock!
-
+    var slotController: SlotHolderControlableMock!
+    var flagController: FlagControllerParamsInputMock!
+    var runtimeOptions: RuntimeOptionsMock!
+    
     override func setUp() {
         super.setUp()
 
         configFetcher = ConfigFetchableMock()
         configFetcher.fetchExperimentsCallbackClosure = { $0?(.success) }
+        
+        slotController = SlotHolderControlableMock()
+        
+        flagController = FlagControllerParamsInputMock()
+        
+        runtimeOptions = RuntimeOptionsMock()
 
-        flagUpdater = ConfigUpdaterInputMock()
-        flagResolver = ConfigUpdaterControllableMock()
-
-        let factory = MainFactoryProtocolStub()
-        factory._configFetcher = configFetcher
-        factory._flagUpdater = flagUpdater
-        factory._flagResolver = flagResolver
-        factory._threadChecker = ThreadChecker(queue: nil)
-
-        impl = VarioqubInternalImpl(mainFactory: factory)
+        impl = VarioqubInternalImpl(
+            configFetcher: configFetcher,
+            slotController: slotController,
+            flagController: flagController,
+            runtimeOptions: runtimeOptions,
+            threadChecker: ThreadChecker()
+        )
     }
 
     func testFetch() {
@@ -38,7 +43,7 @@ final class VarioqubInternalImplTests: XCTestCase {
 
     func testActivate() {
         impl.activateConfig(nil)
-        XCTAssert(flagResolver.activateConfigCalled)
+        XCTAssert(slotController.activateConfigCalled)
     }
 
     func testFetchSuccessAndActivate() {
@@ -49,7 +54,7 @@ final class VarioqubInternalImplTests: XCTestCase {
             guard let self else { fatalError() }
             fetchExperimentsExpectation.fulfill()
 
-            XCTAssertFalse(self.flagResolver.activateConfigCalled)
+            XCTAssertFalse(self.slotController.activateConfigCalled)
 
             $0?(.success)
         }
@@ -59,7 +64,7 @@ final class VarioqubInternalImplTests: XCTestCase {
         waitForExpectations(timeout: 1)
 
         XCTAssertTrue(configFetcher.fetchExperimentsCallbackCalled)
-        XCTAssertTrue(flagResolver.activateConfigCalled)
+        XCTAssertTrue(slotController.activateConfigCalled)
     }
 
     func testFetchErrorAndActivate() {
@@ -70,7 +75,7 @@ final class VarioqubInternalImplTests: XCTestCase {
             guard let self else { fatalError() }
             fetchExperimentsExpectation.fulfill()
 
-            XCTAssertFalse(self.flagResolver.activateConfigCalled)
+            XCTAssertFalse(self.slotController.activateConfigCalled)
 
             $0?(.error(.network(StubError())))
         }
@@ -80,7 +85,7 @@ final class VarioqubInternalImplTests: XCTestCase {
         waitForExpectations(timeout: 1)
 
         XCTAssertTrue(configFetcher.fetchExperimentsCallbackCalled)
-        XCTAssertFalse(flagResolver.activateConfigCalled)
+        XCTAssertFalse(slotController.activateConfigCalled)
     }
 
     func setDefaultsTest() {
@@ -97,8 +102,8 @@ final class VarioqubInternalImplTests: XCTestCase {
         }
         waitForExpectations(timeout: 1)
 
-        XCTAssertTrue(flagUpdater.updateDefaultsFlagsCalled)
-        XCTAssertEqual(flagUpdater.updateDefaultsFlagsReceivedFlags, defValues)
+        XCTAssertTrue(flagController.updateDefaultValuesCalled)
+        XCTAssertEqual(flagController.updateDefaultValuesReceivedDefaultValues, defValues)
     }
 
 }

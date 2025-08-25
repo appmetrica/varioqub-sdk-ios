@@ -1,6 +1,6 @@
 
 /// The VarioqubTestIDSet struct that represents a set of VarioqubTestIDs.
-public struct VarioqubTestIDSet {
+public struct VarioqubTestIDSet: Equatable {
 
     /// The raw value of the VarioqubTestID set.
     public var set: Set<VarioqubTestID>

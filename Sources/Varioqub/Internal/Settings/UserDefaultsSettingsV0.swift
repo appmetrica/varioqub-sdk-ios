@@ -10,7 +10,7 @@ enum SettingsKeysV0 {
 }
 
 /// UserDefaultsSettings is a default implementation via UserDefaults.
-final class UserDefaultsSettingsV0: VarioqubSettingsProtocol {
+final class UserDefaultsSettingsV0 {
 
     let userDefaults: UserDefaultsProtocol
 
@@ -53,14 +53,14 @@ final class UserDefaultsSettingsV0: VarioqubSettingsProtocol {
     /// Stores the config fetched from the server into the key-value storage identified by the key.
     /// - parameter data: Binary encoded network data.
     /// - parameter key: Network data key.
-    func storeNetworkData(_ data: Data?, for key: String) {
+    func storeNetworkDSOv0(_ data: Data?, for key: String) {
         userDefaults.set(data, forKey: SettingsKeysV0.networkDataPrefix + key)
     }
 
     /// Gets the config by the key.
     /// - parameter key: Network data key.
     /// - returns: The previously saved network data or nil if non-available.
-    func loadNetworkData(for key: String) -> Data? {
+    func loadNetworkDSOv0(for key: String) -> Data? {
         userDefaults.data(forKey: SettingsKeysV0.networkDataPrefix + key)
     }
 }

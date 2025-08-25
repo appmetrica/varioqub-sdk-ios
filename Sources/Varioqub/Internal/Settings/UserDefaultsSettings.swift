@@ -11,6 +11,7 @@ enum UserDefaultsSettingsKey: Hashable {
     case lastETag
     case reporterData
     case networkData(key: String)
+    case networkDataV110(key: String)
 
     var rawValue: String {
         switch self {
@@ -20,6 +21,7 @@ enum UserDefaultsSettingsKey: Hashable {
         case .lastETag: return "last_etag"
         case .reporterData: return "reporter_data"
         case .networkData(let key): return "network_\(key)"
+        case .networkDataV110(let key): return "network110_\(key)"
         }
     }
     
@@ -110,7 +112,7 @@ final class UserDefaultsSettings: VarioqubSettingsProtocol {
     /// Stores the config fetched from the server into the key-value storage identified by the key.
     /// - parameter data: Binary encoded network data.
     /// - parameter key: Network data key.
-    public func storeNetworkData(_ data: Data?, for key: String) {
+    public func storeNetworkDSOv0(_ data: Data?, for key: String) {
         writeVersion()
         userDefaults.set(data, forKey: wrappedKey(.networkData(key: key)))
     }
@@ -118,7 +120,16 @@ final class UserDefaultsSettings: VarioqubSettingsProtocol {
     /// Gets the config by the key.
     /// - parameter key: Network data key.
     /// - returns: The previously saved network data or nil if non-available.
-    public func loadNetworkData(for key: String) -> Data? {
+    public func loadNetworkDSOv0(for key: String) -> Data? {
         userDefaults.data(forKey: wrappedKey(.networkData(key: key)))
+    }
+    
+    func storeNetworkModel(_ data: Data?, for key: String) {
+        writeVersion()
+        userDefaults.set(data, forKey: wrappedKey(.networkDataV110(key: key)))
+    }
+    
+    func loadNetworkModel(for key: String) -> Data? {
+        userDefaults.data(forKey: wrappedKey(.networkDataV110(key: key)))
     }
 }

@@ -14,11 +14,19 @@ final class VQSettingsProxy: VarioqubSettingsProtocol {
         set { objcProtocol.lastFetchDate = newValue }
     }
 
-    func storeNetworkData(_ data: Data?, for key: String) {
+    func storeNetworkDSOv0(_ data: Data?, for key: String) {
         objcProtocol.storeNetworkData(data, for: key)
     }
 
-    func loadNetworkData(for key: String) -> Data? {
+    func loadNetworkDSOv0(for key: String) -> Data? {
+        objcProtocol.loadNetworkData(for: key)
+    }
+    
+    func storeNetworkModel(_ data: Data?, for key: String) {
+        objcProtocol.storeNetworkData(data, for: key)
+    }
+
+    func loadNetworkModel(for key: String) -> Data? {
         objcProtocol.loadNetworkData(for: key)
     }
 

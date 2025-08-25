@@ -13,9 +13,14 @@ public extension VQVarioqubFacade {
         set { mainInstance.sendEventOnChangeConfig = newValue }
     }
     
-    var clientFeatures: VQClientFeatures {
+    var clientFeatures: VQVarioqubClientFeatures {
         get { mainInstance.clientFeatures }
         set { mainInstance.clientFeatures = newValue }
     }
 
+    var runtimeParams: VQVarioqubParameters {
+        get { mainInstance.runtimeParams }
+        set { mainInstance.runtimeParams = newValue }
+    }
+    
 }

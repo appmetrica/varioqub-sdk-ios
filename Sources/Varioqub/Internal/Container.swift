@@ -2,10 +2,12 @@
 struct Container {
     var defaultsWrapper: VarioqubDefaultsSetupable
     var fetchWrapper: VarioqubConfigurable
-    var flagProvider: FlagProvider
+    var flagProvider: VarioqubFlagProvider
     var initializer: VarioqubInitializable
     var identifiersProvider: VarioqubIdentifiersProvider
-    var internalOptions: RuntimeOptionable
+    var runtimeOptions: VarioqubRuntimeOptionable
+    var resourcesProvider: VarioqubResourcesProvider
+    var deeplinkInput: VarioqubDeeplinkInput
 }
 
 extension Container {
@@ -16,7 +18,9 @@ extension Container {
         flagProvider: NullFlagProvider(),
         initializer: NullVarioqubInitializable(),
         identifiersProvider: NullVarioqubIdentifiersProvider(),
-        internalOptions: NullRuntimeOptionable()
+        runtimeOptions: NullRuntimeOptionable(),
+        resourcesProvider: NullResourceProvider(),
+        deeplinkInput: NullVarioqubDeeplink()
     )
     
 }

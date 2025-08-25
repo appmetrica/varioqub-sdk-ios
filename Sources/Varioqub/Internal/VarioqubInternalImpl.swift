@@ -6,15 +6,24 @@ import VarioqubUtils
 
 final class VarioqubInternalImpl {
 
-    private let mainFactory: MainFactoryProtocol
-    private lazy var configFetcher: ConfigFetchable = mainFactory.configFetcher
-    private lazy var flagUpdater: ConfigUpdaterInput = mainFactory.flagUpdater
-    private lazy var flagResolver: ConfigUpdaterControllable = mainFactory.flagControllable
+    private let configFetcher: ConfigFetchable
+    private let slotController: SlotHolderControlable
+    private let flagController: FlagControllerParamsInput
+    private let runtimeOptions: VarioqubRuntimeOptionable & RuntimeOptionsProtocol
     private let threadChecker: ThreadChecker
-
-    init(mainFactory: MainFactoryProtocol) {
-        self.mainFactory = mainFactory
-        self.threadChecker = mainFactory.threadChecker
+    
+    init(
+        configFetcher: ConfigFetchable,
+        slotController: SlotHolderControlable,
+        flagController: FlagControllerParamsInput,
+        runtimeOptions: VarioqubRuntimeOptionable & RuntimeOptionsProtocol,
+        threadChecker: ThreadChecker
+    ) {
+        self.configFetcher = configFetcher
+        self.slotController = slotController
+        self.flagController = flagController
+        self.runtimeOptions = runtimeOptions
+        self.threadChecker = threadChecker
     }
 
 }
@@ -36,7 +45,7 @@ extension VarioqubInternalImpl: VarioqubConfigurable {
         varioqubLogger.trace("activatedConfig")
         threadChecker.check()
 
-        flagResolver.activateConfig()
+        slotController.activateConfig()
         callback?()
     }
 
@@ -55,7 +64,7 @@ extension VarioqubInternalImpl: VarioqubConfigurable {
             defer { callback?(ans) }
 
             if !ans.isError {
-                self?.flagResolver.activateConfig()
+                self?.slotController.activateConfig()
             }
         }
     }
@@ -69,11 +78,12 @@ extension VarioqubInternalImpl: VarioqubDefaultsSetupable {
         threadChecker.check()
 
         let flags = defaults.mapValues { VarioqubValue(string: $0) }
-        flagUpdater.updateDefaultsFlags(flags)
+        updateDefaultValues(flags)
+        
         callback?()
     }
 
-    public func loadXml(at path: URL, callback: XmlParserCallback?) {
+    func loadXml(at path: URL, callback: XmlParserCallback?) {
         varioqubLogger.trace("loadXml at \(path)")
         threadChecker.check()
 
@@ -101,6 +111,41 @@ extension VarioqubInternalImpl: VarioqubDefaultsSetupable {
 
 }
 
+extension VarioqubInternalImpl: VarioqubRuntimeOptionable {
+    
+    var sendEventOnChangeConfig: Bool {
+        get { return runtimeOptions.sendEventOnChangeConfig }
+        set { runtimeOptions.sendEventOnChangeConfig = newValue }
+    }
+
+    var clientFeatures: VarioqubClientFeatures {
+        get { return runtimeOptions.clientFeatures }
+        set { runtimeOptions.clientFeatures = newValue }
+    }
+
+    var runtimeParams: VarioqubParameters {
+        get { runtimeOptions.runtimeParams }
+        set {
+            runtimeOptions.runtimeParams = newValue
+            flagController.updateRuntimeParams(newValue)
+        }
+    }
+    
+}
+
+extension VarioqubInternalImpl: VarioqubDeeplinkInput {
+    
+    func handleDeeplink(_ url: URL) -> Bool {
+        let params = DeeplinkParser.parse(url: url)
+        
+        runtimeOptions.deeplinkParams = params
+        flagController.updateDeeplinkParams(params)
+        
+        return true
+    }
+    
+}
+
 private extension VarioqubInternalImpl {
 
     func handleParser(_ parser: XmlParser, callback: XmlParserCallback?) {
@@ -118,7 +163,11 @@ private extension VarioqubInternalImpl {
 
     func handleParser(_ parser: XmlParser) throws {
         let data = try parser.parse()
-        flagUpdater.updateDefaultsFlags(data)
+        updateDefaultValues(data)
+    }
+    
+    func updateDefaultValues(_ values: [VarioqubFlag: VarioqubValue]) {
+        flagController.updateDefaultValues(values)
     }
 
 }

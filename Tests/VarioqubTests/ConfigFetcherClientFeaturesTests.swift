@@ -26,8 +26,8 @@ final class ConfigFetcherClientFeaturesTests: XCTestCase {
     var networkClient: SimpleNetworkRequestCreatorMock!
     var settings: ConfigFetcherSettingsMock!
     var identifiersProvider: ConfigIdentifiersProviderMock!
-    var configUpdaterMock: ConfigUpdaterInputMock!
-    var runtimeOptionable: RuntimeOptionableMock!
+    var configFetcherOutput: ConfigFetcherOutputMock!
+    var runtimeOptionable: VarioqubRuntimeOptionableMock!
 
     override func setUp() {
         super.setUp()
@@ -44,23 +44,23 @@ final class ConfigFetcherClientFeaturesTests: XCTestCase {
         settings = ConfigFetcherSettingsMock()
         settings.lastFetchDate = Date(timeIntervalSince1970: 0)
 
-        configUpdaterMock = ConfigUpdaterInputMock()
+        configFetcherOutput = ConfigFetcherOutputMock()
         
-        runtimeOptionable = RuntimeOptionableMock()
+        runtimeOptionable = VarioqubRuntimeOptionableMock()
         runtimeOptionable.clientFeatures = clientFeatures
 
-        configFetcher = ConfigFetcher(networkClient: networkClient,
-                idProvider: idProvider,
-                config: internalConfig,
-                settings: settings,
-                identifiersProvider: identifiersProvider,
-                executor: mockExecutor,
-                output: configUpdaterMock,
-                environmentProvider: envProvider,
-                runtimeOptions: runtimeOptionable,
-                threadChecker: ThreadChecker()
+        configFetcher = ConfigFetcher(
+            networkClient: networkClient,
+            idProvider: idProvider,
+            config: internalConfig,
+            settings: settings,
+            identifiersProvider: identifiersProvider,
+            executor: mockExecutor,
+            output: configFetcherOutput,
+            environmentProvider: envProvider,
+            runtimeOptions: runtimeOptionable,
+            threadChecker: ThreadChecker()
         )
-
     }
     
     func testClientFeatures() throws {
@@ -86,7 +86,7 @@ private extension ConfigFetcherClientFeaturesTests {
             XCTAssert(false)
             fatalError()
         }
-        let pbRequest = try PBRequest(serializedData: data)
+        let pbRequest = try PBRequest(serializedBytes: data)
         let dict: [String: String] = Dictionary(
             pbRequest.clientFeatures.map { ($0.name, $0.value) },
             uniquingKeysWith: { k1, k2 in

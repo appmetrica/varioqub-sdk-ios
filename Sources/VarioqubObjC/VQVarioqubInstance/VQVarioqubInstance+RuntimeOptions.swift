@@ -11,9 +11,14 @@ public extension VQVarioqubInstance {
         set { originalInstance.sendEventOnChangeConfig = newValue }
     }
     
-    var clientFeatures: VQClientFeatures {
-        get { VQClientFeatures(clientFeatures: originalInstance.clientFeatures) }
+    var clientFeatures: VQVarioqubClientFeatures {
+        get { VQVarioqubClientFeatures(clientFeatures: originalInstance.clientFeatures) }
         set { originalInstance.clientFeatures = newValue.clientFeatures }
+    }
+    
+    var runtimeParams: VQVarioqubParameters {
+        get { VQVarioqubParameters(params: originalInstance.runtimeParams) }
+        set { originalInstance.runtimeParams = newValue.vqParams }
     }
 
 }

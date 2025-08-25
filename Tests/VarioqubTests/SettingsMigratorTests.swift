@@ -83,8 +83,8 @@ final class SettingsMigratorTests: XCTestCase {
         XCTAssertEqual(getValueFromNewMock(key: .lastFetchDate, type: Date.self), fetchDateValue)
         XCTAssertEqual(getValueFromNewMock(key: .reporterData, type: Data.self), reporterDataValue)
         XCTAssertEqual(getValueFromNewMock(key: .shouldUpdateExpirement, type: Bool.self), shouldUpdateExpValue)
-        XCTAssertEqual(getValueFromNewMock(key: .networkData(key: NetworkDataKey.pending.rawValue), type: Data.self), pendingDataValue)
-        XCTAssertEqual(getValueFromNewMock(key: .networkData(key: NetworkDataKey.active.rawValue), type: Data.self), activeDataValue)
+        XCTAssertEqual(getValueFromNewMock(key: .networkData(key: NetworkDataKeyDSO.pending.rawValue), type: Data.self), pendingDataValue)
+        XCTAssertEqual(getValueFromNewMock(key: .networkData(key: NetworkDataKeyDSO.active.rawValue), type: Data.self), activeDataValue)
         XCTAssertEqual(newMock.storage.count, 7)
     }
     

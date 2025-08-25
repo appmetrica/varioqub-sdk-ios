@@ -26,143 +26,170 @@ struct PBRequest {
   // methods supported on all messages.
 
   var id: String {
-    get {return _id ?? String()}
-    set {_id = newValue}
+    get {return _storage._id ?? String()}
+    set {_uniqueStorage()._id = newValue}
   }
   /// Returns true if `id` has been explicitly set.
-  var hasID: Bool {return self._id != nil}
+  var hasID: Bool {return _storage._id != nil}
   /// Clears the value of `id`. Subsequent reads from it will return its default value.
-  mutating func clearID() {self._id = nil}
+  mutating func clearID() {_uniqueStorage()._id = nil}
 
   var userID: String {
-    get {return _userID ?? String()}
-    set {_userID = newValue}
+    get {return _storage._userID ?? String()}
+    set {_uniqueStorage()._userID = newValue}
   }
   /// Returns true if `userID` has been explicitly set.
-  var hasUserID: Bool {return self._userID != nil}
+  var hasUserID: Bool {return _storage._userID != nil}
   /// Clears the value of `userID`. Subsequent reads from it will return its default value.
-  mutating func clearUserID() {self._userID = nil}
+  mutating func clearUserID() {_uniqueStorage()._userID = nil}
 
   /// maybe map<string, string> is better
-  var clientFeatures: [PBClientFeature] = []
+  var clientFeatures: [PBClientFeature] {
+    get {return _storage._clientFeatures}
+    set {_uniqueStorage()._clientFeatures = newValue}
+  }
 
   /// used to filter by
   var sdkVersion: String {
-    get {return _sdkVersion ?? String()}
-    set {_sdkVersion = newValue}
+    get {return _storage._sdkVersion ?? String()}
+    set {_uniqueStorage()._sdkVersion = newValue}
   }
   /// Returns true if `sdkVersion` has been explicitly set.
-  var hasSdkVersion: Bool {return self._sdkVersion != nil}
+  var hasSdkVersion: Bool {return _storage._sdkVersion != nil}
   /// Clears the value of `sdkVersion`. Subsequent reads from it will return its default value.
-  mutating func clearSdkVersion() {self._sdkVersion = nil}
+  mutating func clearSdkVersion() {_uniqueStorage()._sdkVersion = nil}
 
   /// used to filter by
   var platform: String {
-    get {return _platform ?? String()}
-    set {_platform = newValue}
+    get {return _storage._platform ?? String()}
+    set {_uniqueStorage()._platform = newValue}
   }
   /// Returns true if `platform` has been explicitly set.
-  var hasPlatform: Bool {return self._platform != nil}
+  var hasPlatform: Bool {return _storage._platform != nil}
   /// Clears the value of `platform`. Subsequent reads from it will return its default value.
-  mutating func clearPlatform() {self._platform = nil}
+  mutating func clearPlatform() {_uniqueStorage()._platform = nil}
 
   /// used to filter by
   var version: String {
-    get {return _version ?? String()}
-    set {_version = newValue}
+    get {return _storage._version ?? String()}
+    set {_uniqueStorage()._version = newValue}
   }
   /// Returns true if `version` has been explicitly set.
-  var hasVersion: Bool {return self._version != nil}
+  var hasVersion: Bool {return _storage._version != nil}
   /// Clears the value of `version`. Subsequent reads from it will return its default value.
-  mutating func clearVersion() {self._version = nil}
+  mutating func clearVersion() {_uniqueStorage()._version = nil}
 
   /// used to filter by
   var versionCode: String {
-    get {return _versionCode ?? String()}
-    set {_versionCode = newValue}
+    get {return _storage._versionCode ?? String()}
+    set {_uniqueStorage()._versionCode = newValue}
   }
   /// Returns true if `versionCode` has been explicitly set.
-  var hasVersionCode: Bool {return self._versionCode != nil}
+  var hasVersionCode: Bool {return _storage._versionCode != nil}
   /// Clears the value of `versionCode`. Subsequent reads from it will return its default value.
-  mutating func clearVersionCode() {self._versionCode = nil}
+  mutating func clearVersionCode() {_uniqueStorage()._versionCode = nil}
 
   /// used to filter by
   var language: String {
-    get {return _language ?? String()}
-    set {_language = newValue}
+    get {return _storage._language ?? String()}
+    set {_uniqueStorage()._language = newValue}
   }
   /// Returns true if `language` has been explicitly set.
-  var hasLanguage: Bool {return self._language != nil}
+  var hasLanguage: Bool {return _storage._language != nil}
   /// Clears the value of `language`. Subsequent reads from it will return its default value.
-  mutating func clearLanguage() {self._language = nil}
+  mutating func clearLanguage() {_uniqueStorage()._language = nil}
 
   /// used to split by
   var deviceID: String {
-    get {return _deviceID ?? String()}
-    set {_deviceID = newValue}
+    get {return _storage._deviceID ?? String()}
+    set {_uniqueStorage()._deviceID = newValue}
   }
   /// Returns true if `deviceID` has been explicitly set.
-  var hasDeviceID: Bool {return self._deviceID != nil}
+  var hasDeviceID: Bool {return _storage._deviceID != nil}
   /// Clears the value of `deviceID`. Subsequent reads from it will return its default value.
-  mutating func clearDeviceID() {self._deviceID = nil}
+  mutating func clearDeviceID() {_uniqueStorage()._deviceID = nil}
 
   /// provide some diagnostics measurement
-  var diagnostics: Dictionary<String,Double> = [:]
+  var diagnostics: Dictionary<String,Double> {
+    get {return _storage._diagnostics}
+    set {_uniqueStorage()._diagnostics = newValue}
+  }
 
   /// used to filter by
   var osVersion: String {
-    get {return _osVersion ?? String()}
-    set {_osVersion = newValue}
+    get {return _storage._osVersion ?? String()}
+    set {_uniqueStorage()._osVersion = newValue}
   }
   /// Returns true if `osVersion` has been explicitly set.
-  var hasOsVersion: Bool {return self._osVersion != nil}
+  var hasOsVersion: Bool {return _storage._osVersion != nil}
   /// Clears the value of `osVersion`. Subsequent reads from it will return its default value.
-  mutating func clearOsVersion() {self._osVersion = nil}
+  mutating func clearOsVersion() {_uniqueStorage()._osVersion = nil}
 
   /// used to filter by
   var osHumanVersion: String {
-    get {return _osHumanVersion ?? String()}
-    set {_osHumanVersion = newValue}
+    get {return _storage._osHumanVersion ?? String()}
+    set {_uniqueStorage()._osHumanVersion = newValue}
   }
   /// Returns true if `osHumanVersion` has been explicitly set.
-  var hasOsHumanVersion: Bool {return self._osHumanVersion != nil}
+  var hasOsHumanVersion: Bool {return _storage._osHumanVersion != nil}
   /// Clears the value of `osHumanVersion`. Subsequent reads from it will return its default value.
-  mutating func clearOsHumanVersion() {self._osHumanVersion = nil}
+  mutating func clearOsHumanVersion() {_uniqueStorage()._osHumanVersion = nil}
 
   var sdkAdapterName: String {
-    get {return _sdkAdapterName ?? String()}
-    set {_sdkAdapterName = newValue}
+    get {return _storage._sdkAdapterName ?? String()}
+    set {_uniqueStorage()._sdkAdapterName = newValue}
   }
   /// Returns true if `sdkAdapterName` has been explicitly set.
-  var hasSdkAdapterName: Bool {return self._sdkAdapterName != nil}
+  var hasSdkAdapterName: Bool {return _storage._sdkAdapterName != nil}
   /// Clears the value of `sdkAdapterName`. Subsequent reads from it will return its default value.
-  mutating func clearSdkAdapterName() {self._sdkAdapterName = nil}
+  mutating func clearSdkAdapterName() {_uniqueStorage()._sdkAdapterName = nil}
 
   var sdkIDAdapterName: String {
-    get {return _sdkIDAdapterName ?? String()}
-    set {_sdkIDAdapterName = newValue}
+    get {return _storage._sdkIDAdapterName ?? String()}
+    set {_uniqueStorage()._sdkIDAdapterName = newValue}
   }
   /// Returns true if `sdkIDAdapterName` has been explicitly set.
-  var hasSdkIDAdapterName: Bool {return self._sdkIDAdapterName != nil}
+  var hasSdkIDAdapterName: Bool {return _storage._sdkIDAdapterName != nil}
   /// Clears the value of `sdkIDAdapterName`. Subsequent reads from it will return its default value.
-  mutating func clearSdkIDAdapterName() {self._sdkIDAdapterName = nil}
+  mutating func clearSdkIDAdapterName() {_uniqueStorage()._sdkIDAdapterName = nil}
+
+  var requestID: UInt64 {
+    get {return _storage._requestID ?? 0}
+    set {_uniqueStorage()._requestID = newValue}
+  }
+  /// Returns true if `requestID` has been explicitly set.
+  var hasRequestID: Bool {return _storage._requestID != nil}
+  /// Clears the value of `requestID`. Subsequent reads from it will return its default value.
+  mutating func clearRequestID() {_uniqueStorage()._requestID = nil}
+
+  var prevRequestID: UInt64 {
+    get {return _storage._prevRequestID ?? 0}
+    set {_uniqueStorage()._prevRequestID = newValue}
+  }
+  /// Returns true if `prevRequestID` has been explicitly set.
+  var hasPrevRequestID: Bool {return _storage._prevRequestID != nil}
+  /// Clears the value of `prevRequestID`. Subsequent reads from it will return its default value.
+  mutating func clearPrevRequestID() {_uniqueStorage()._prevRequestID = nil}
+
+  var currentActivatedConfigVersion: String {
+    get {return _storage._currentActivatedConfigVersion ?? String()}
+    set {_uniqueStorage()._currentActivatedConfigVersion = newValue}
+  }
+  /// Returns true if `currentActivatedConfigVersion` has been explicitly set.
+  var hasCurrentActivatedConfigVersion: Bool {return _storage._currentActivatedConfigVersion != nil}
+  /// Clears the value of `currentActivatedConfigVersion`. Subsequent reads from it will return its default value.
+  mutating func clearCurrentActivatedConfigVersion() {_uniqueStorage()._currentActivatedConfigVersion = nil}
+
+  var cachedResourceKeys: [String] {
+    get {return _storage._cachedResourceKeys}
+    set {_uniqueStorage()._cachedResourceKeys = newValue}
+  }
 
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
   init() {}
 
-  fileprivate var _id: String? = nil
-  fileprivate var _userID: String? = nil
-  fileprivate var _sdkVersion: String? = nil
-  fileprivate var _platform: String? = nil
-  fileprivate var _version: String? = nil
-  fileprivate var _versionCode: String? = nil
-  fileprivate var _language: String? = nil
-  fileprivate var _deviceID: String? = nil
-  fileprivate var _osVersion: String? = nil
-  fileprivate var _osHumanVersion: String? = nil
-  fileprivate var _sdkAdapterName: String? = nil
-  fileprivate var _sdkIDAdapterName: String? = nil
+  fileprivate var _storage = _StorageClass.defaultInstance
 }
 
 struct PBClientFeature {
@@ -220,98 +247,188 @@ extension PBRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementation
     12: .standard(proto: "os_human_version"),
     13: .standard(proto: "sdk_adapter_name"),
     14: .standard(proto: "sdk_id_adapter_name"),
+    15: .standard(proto: "request_id"),
+    16: .standard(proto: "prev_request_id"),
+    17: .standard(proto: "current_activated_config_version"),
+    18: .standard(proto: "cached_resource_keys"),
   ]
 
+  fileprivate class _StorageClass {
+    var _id: String? = nil
+    var _userID: String? = nil
+    var _clientFeatures: [PBClientFeature] = []
+    var _sdkVersion: String? = nil
+    var _platform: String? = nil
+    var _version: String? = nil
+    var _versionCode: String? = nil
+    var _language: String? = nil
+    var _deviceID: String? = nil
+    var _diagnostics: Dictionary<String,Double> = [:]
+    var _osVersion: String? = nil
+    var _osHumanVersion: String? = nil
+    var _sdkAdapterName: String? = nil
+    var _sdkIDAdapterName: String? = nil
+    var _requestID: UInt64? = nil
+    var _prevRequestID: UInt64? = nil
+    var _currentActivatedConfigVersion: String? = nil
+    var _cachedResourceKeys: [String] = []
+
+    static let defaultInstance = _StorageClass()
+
+    private init() {}
+
+    init(copying source: _StorageClass) {
+      _id = source._id
+      _userID = source._userID
+      _clientFeatures = source._clientFeatures
+      _sdkVersion = source._sdkVersion
+      _platform = source._platform
+      _version = source._version
+      _versionCode = source._versionCode
+      _language = source._language
+      _deviceID = source._deviceID
+      _diagnostics = source._diagnostics
+      _osVersion = source._osVersion
+      _osHumanVersion = source._osHumanVersion
+      _sdkAdapterName = source._sdkAdapterName
+      _sdkIDAdapterName = source._sdkIDAdapterName
+      _requestID = source._requestID
+      _prevRequestID = source._prevRequestID
+      _currentActivatedConfigVersion = source._currentActivatedConfigVersion
+      _cachedResourceKeys = source._cachedResourceKeys
+    }
+  }
+
+  fileprivate mutating func _uniqueStorage() -> _StorageClass {
+    if !isKnownUniquelyReferenced(&_storage) {
+      _storage = _StorageClass(copying: _storage)
+    }
+    return _storage
+  }
+
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    while let fieldNumber = try decoder.nextFieldNumber() {
-      // The use of inline closures is to circumvent an issue where the compiler
-      // allocates stack space for every case branch when no optimizations are
-      // enabled. https://github.com/apple/swift-protobuf/issues/1034
-      switch fieldNumber {
-      case 1: try { try decoder.decodeSingularStringField(value: &self._id) }()
-      case 2: try { try decoder.decodeSingularStringField(value: &self._userID) }()
-      case 3: try { try decoder.decodeRepeatedMessageField(value: &self.clientFeatures) }()
-      case 4: try { try decoder.decodeSingularStringField(value: &self._sdkVersion) }()
-      case 5: try { try decoder.decodeSingularStringField(value: &self._platform) }()
-      case 6: try { try decoder.decodeSingularStringField(value: &self._version) }()
-      case 7: try { try decoder.decodeSingularStringField(value: &self._versionCode) }()
-      case 8: try { try decoder.decodeSingularStringField(value: &self._language) }()
-      case 9: try { try decoder.decodeSingularStringField(value: &self._deviceID) }()
-      case 10: try { try decoder.decodeMapField(fieldType: SwiftProtobuf._ProtobufMap<SwiftProtobuf.ProtobufString,SwiftProtobuf.ProtobufDouble>.self, value: &self.diagnostics) }()
-      case 11: try { try decoder.decodeSingularStringField(value: &self._osVersion) }()
-      case 12: try { try decoder.decodeSingularStringField(value: &self._osHumanVersion) }()
-      case 13: try { try decoder.decodeSingularStringField(value: &self._sdkAdapterName) }()
-      case 14: try { try decoder.decodeSingularStringField(value: &self._sdkIDAdapterName) }()
-      default: break
+    _ = _uniqueStorage()
+    try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
+      while let fieldNumber = try decoder.nextFieldNumber() {
+        // The use of inline closures is to circumvent an issue where the compiler
+        // allocates stack space for every case branch when no optimizations are
+        // enabled. https://github.com/apple/swift-protobuf/issues/1034
+        switch fieldNumber {
+        case 1: try { try decoder.decodeSingularStringField(value: &_storage._id) }()
+        case 2: try { try decoder.decodeSingularStringField(value: &_storage._userID) }()
+        case 3: try { try decoder.decodeRepeatedMessageField(value: &_storage._clientFeatures) }()
+        case 4: try { try decoder.decodeSingularStringField(value: &_storage._sdkVersion) }()
+        case 5: try { try decoder.decodeSingularStringField(value: &_storage._platform) }()
+        case 6: try { try decoder.decodeSingularStringField(value: &_storage._version) }()
+        case 7: try { try decoder.decodeSingularStringField(value: &_storage._versionCode) }()
+        case 8: try { try decoder.decodeSingularStringField(value: &_storage._language) }()
+        case 9: try { try decoder.decodeSingularStringField(value: &_storage._deviceID) }()
+        case 10: try { try decoder.decodeMapField(fieldType: SwiftProtobuf._ProtobufMap<SwiftProtobuf.ProtobufString,SwiftProtobuf.ProtobufDouble>.self, value: &_storage._diagnostics) }()
+        case 11: try { try decoder.decodeSingularStringField(value: &_storage._osVersion) }()
+        case 12: try { try decoder.decodeSingularStringField(value: &_storage._osHumanVersion) }()
+        case 13: try { try decoder.decodeSingularStringField(value: &_storage._sdkAdapterName) }()
+        case 14: try { try decoder.decodeSingularStringField(value: &_storage._sdkIDAdapterName) }()
+        case 15: try { try decoder.decodeSingularUInt64Field(value: &_storage._requestID) }()
+        case 16: try { try decoder.decodeSingularUInt64Field(value: &_storage._prevRequestID) }()
+        case 17: try { try decoder.decodeSingularStringField(value: &_storage._currentActivatedConfigVersion) }()
+        case 18: try { try decoder.decodeRepeatedStringField(value: &_storage._cachedResourceKeys) }()
+        default: break
+        }
       }
     }
   }
 
   func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    // The use of inline closures is to circumvent an issue where the compiler
-    // allocates stack space for every if/case branch local when no optimizations
-    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
-    // https://github.com/apple/swift-protobuf/issues/1182
-    try { if let v = self._id {
-      try visitor.visitSingularStringField(value: v, fieldNumber: 1)
-    } }()
-    try { if let v = self._userID {
-      try visitor.visitSingularStringField(value: v, fieldNumber: 2)
-    } }()
-    if !self.clientFeatures.isEmpty {
-      try visitor.visitRepeatedMessageField(value: self.clientFeatures, fieldNumber: 3)
+    try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every if/case branch local when no optimizations
+      // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+      // https://github.com/apple/swift-protobuf/issues/1182
+      try { if let v = _storage._id {
+        try visitor.visitSingularStringField(value: v, fieldNumber: 1)
+      } }()
+      try { if let v = _storage._userID {
+        try visitor.visitSingularStringField(value: v, fieldNumber: 2)
+      } }()
+      if !_storage._clientFeatures.isEmpty {
+        try visitor.visitRepeatedMessageField(value: _storage._clientFeatures, fieldNumber: 3)
+      }
+      try { if let v = _storage._sdkVersion {
+        try visitor.visitSingularStringField(value: v, fieldNumber: 4)
+      } }()
+      try { if let v = _storage._platform {
+        try visitor.visitSingularStringField(value: v, fieldNumber: 5)
+      } }()
+      try { if let v = _storage._version {
+        try visitor.visitSingularStringField(value: v, fieldNumber: 6)
+      } }()
+      try { if let v = _storage._versionCode {
+        try visitor.visitSingularStringField(value: v, fieldNumber: 7)
+      } }()
+      try { if let v = _storage._language {
+        try visitor.visitSingularStringField(value: v, fieldNumber: 8)
+      } }()
+      try { if let v = _storage._deviceID {
+        try visitor.visitSingularStringField(value: v, fieldNumber: 9)
+      } }()
+      if !_storage._diagnostics.isEmpty {
+        try visitor.visitMapField(fieldType: SwiftProtobuf._ProtobufMap<SwiftProtobuf.ProtobufString,SwiftProtobuf.ProtobufDouble>.self, value: _storage._diagnostics, fieldNumber: 10)
+      }
+      try { if let v = _storage._osVersion {
+        try visitor.visitSingularStringField(value: v, fieldNumber: 11)
+      } }()
+      try { if let v = _storage._osHumanVersion {
+        try visitor.visitSingularStringField(value: v, fieldNumber: 12)
+      } }()
+      try { if let v = _storage._sdkAdapterName {
+        try visitor.visitSingularStringField(value: v, fieldNumber: 13)
+      } }()
+      try { if let v = _storage._sdkIDAdapterName {
+        try visitor.visitSingularStringField(value: v, fieldNumber: 14)
+      } }()
+      try { if let v = _storage._requestID {
+        try visitor.visitSingularUInt64Field(value: v, fieldNumber: 15)
+      } }()
+      try { if let v = _storage._prevRequestID {
+        try visitor.visitSingularUInt64Field(value: v, fieldNumber: 16)
+      } }()
+      try { if let v = _storage._currentActivatedConfigVersion {
+        try visitor.visitSingularStringField(value: v, fieldNumber: 17)
+      } }()
+      if !_storage._cachedResourceKeys.isEmpty {
+        try visitor.visitRepeatedStringField(value: _storage._cachedResourceKeys, fieldNumber: 18)
+      }
     }
-    try { if let v = self._sdkVersion {
-      try visitor.visitSingularStringField(value: v, fieldNumber: 4)
-    } }()
-    try { if let v = self._platform {
-      try visitor.visitSingularStringField(value: v, fieldNumber: 5)
-    } }()
-    try { if let v = self._version {
-      try visitor.visitSingularStringField(value: v, fieldNumber: 6)
-    } }()
-    try { if let v = self._versionCode {
-      try visitor.visitSingularStringField(value: v, fieldNumber: 7)
-    } }()
-    try { if let v = self._language {
-      try visitor.visitSingularStringField(value: v, fieldNumber: 8)
-    } }()
-    try { if let v = self._deviceID {
-      try visitor.visitSingularStringField(value: v, fieldNumber: 9)
-    } }()
-    if !self.diagnostics.isEmpty {
-      try visitor.visitMapField(fieldType: SwiftProtobuf._ProtobufMap<SwiftProtobuf.ProtobufString,SwiftProtobuf.ProtobufDouble>.self, value: self.diagnostics, fieldNumber: 10)
-    }
-    try { if let v = self._osVersion {
-      try visitor.visitSingularStringField(value: v, fieldNumber: 11)
-    } }()
-    try { if let v = self._osHumanVersion {
-      try visitor.visitSingularStringField(value: v, fieldNumber: 12)
-    } }()
-    try { if let v = self._sdkAdapterName {
-      try visitor.visitSingularStringField(value: v, fieldNumber: 13)
-    } }()
-    try { if let v = self._sdkIDAdapterName {
-      try visitor.visitSingularStringField(value: v, fieldNumber: 14)
-    } }()
     try unknownFields.traverse(visitor: &visitor)
   }
 
   static func ==(lhs: PBRequest, rhs: PBRequest) -> Bool {
-    if lhs._id != rhs._id {return false}
-    if lhs._userID != rhs._userID {return false}
-    if lhs.clientFeatures != rhs.clientFeatures {return false}
-    if lhs._sdkVersion != rhs._sdkVersion {return false}
-    if lhs._platform != rhs._platform {return false}
-    if lhs._version != rhs._version {return false}
-    if lhs._versionCode != rhs._versionCode {return false}
-    if lhs._language != rhs._language {return false}
-    if lhs._deviceID != rhs._deviceID {return false}
-    if lhs.diagnostics != rhs.diagnostics {return false}
-    if lhs._osVersion != rhs._osVersion {return false}
-    if lhs._osHumanVersion != rhs._osHumanVersion {return false}
-    if lhs._sdkAdapterName != rhs._sdkAdapterName {return false}
-    if lhs._sdkIDAdapterName != rhs._sdkIDAdapterName {return false}
+    if lhs._storage !== rhs._storage {
+      let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
+        let _storage = _args.0
+        let rhs_storage = _args.1
+        if _storage._id != rhs_storage._id {return false}
+        if _storage._userID != rhs_storage._userID {return false}
+        if _storage._clientFeatures != rhs_storage._clientFeatures {return false}
+        if _storage._sdkVersion != rhs_storage._sdkVersion {return false}
+        if _storage._platform != rhs_storage._platform {return false}
+        if _storage._version != rhs_storage._version {return false}
+        if _storage._versionCode != rhs_storage._versionCode {return false}
+        if _storage._language != rhs_storage._language {return false}
+        if _storage._deviceID != rhs_storage._deviceID {return false}
+        if _storage._diagnostics != rhs_storage._diagnostics {return false}
+        if _storage._osVersion != rhs_storage._osVersion {return false}
+        if _storage._osHumanVersion != rhs_storage._osHumanVersion {return false}
+        if _storage._sdkAdapterName != rhs_storage._sdkAdapterName {return false}
+        if _storage._sdkIDAdapterName != rhs_storage._sdkIDAdapterName {return false}
+        if _storage._requestID != rhs_storage._requestID {return false}
+        if _storage._prevRequestID != rhs_storage._prevRequestID {return false}
+        if _storage._currentActivatedConfigVersion != rhs_storage._currentActivatedConfigVersion {return false}
+        if _storage._cachedResourceKeys != rhs_storage._cachedResourceKeys {return false}
+        return true
+      }
+      if !storagesAreEqual {return false}
+    }
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

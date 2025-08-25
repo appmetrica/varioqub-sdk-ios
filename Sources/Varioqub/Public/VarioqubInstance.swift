@@ -16,14 +16,14 @@ public final class VarioqubInstance {
     
 }
 
-extension VarioqubInstance: RuntimeOptionable {
+extension VarioqubInstance: VarioqubRuntimeOptionable {
 
     /// An additional key-value set to send to Varioqub server.
     ///
     /// No operation is performed before ``VarioqubFacade/initialize(clientId:config:idProvider:reporter:)`` is called.
     public var clientFeatures: ClientFeatures {
-        get { return container.internalOptions.clientFeatures }
-        set { container.internalOptions.clientFeatures = newValue }
+        get { return container.runtimeOptions.clientFeatures }
+        set { container.runtimeOptions.clientFeatures = newValue }
     }
 
     /// Enables or disables sending event when a new config is activated.
@@ -32,8 +32,13 @@ extension VarioqubInstance: RuntimeOptionable {
     ///
     /// See also ``VarioqubFacade/activateConfigAndWait()`` and ``VarioqubFacade/activateConfig(_:)``.
     public var sendEventOnChangeConfig: Bool {
-        get { return container.internalOptions.sendEventOnChangeConfig }
-        set { container.internalOptions.sendEventOnChangeConfig = newValue }
+        get { return container.runtimeOptions.sendEventOnChangeConfig }
+        set { container.runtimeOptions.sendEventOnChangeConfig = newValue }
+    }
+    
+    public var runtimeParams: VarioqubParameters {
+        get { return container.runtimeOptions.runtimeParams }
+        set { container.runtimeOptions.runtimeParams = newValue }
     }
 
 }
@@ -175,7 +180,23 @@ extension VarioqubInstance: VarioqubDefaultsSetupable {
 
 }
 
-extension VarioqubInstance: FlagProvider {
+extension VarioqubInstance: VarioqubResourcesProvider {
+    
+    public func resource(for key: VarioqubResourceKey) -> VarioqubResource? {
+        return container.resourcesProvider.resource(for: key)
+    }
+    
+}
+
+extension VarioqubInstance: VarioqubDeeplinkInput {
+    
+    public func handleDeeplink(_ url: URL) -> Bool {
+        container.deeplinkInput.handleDeeplink(url)
+    }
+    
+}
+
+extension VarioqubInstance: VarioqubFlagProvider {
 
     /// All active flags.
     public var allItems: [VarioqubFlag : VarioqubConfigValue] {

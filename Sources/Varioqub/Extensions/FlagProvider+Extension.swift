@@ -1,17 +1,17 @@
 
-public extension FlagProvider {
+public extension VarioqubFlagProvider {
     var allKeys: Set<VarioqubFlag> {
         Set(allItems.keys)
     }
 }
 
-public extension FlagProvider {
+public extension VarioqubFlagProvider {
     func get<T: VarioqubInitializableByValue>(for flag: VarioqubFlag, type: T.Type) -> T {
         get(for: flag, type: type, defaultValue: nil)
     }
 }
 
-public extension FlagProvider {
+public extension VarioqubFlagProvider {
 
     func getString(for flag: VarioqubFlag, defaultValue: String? = nil) -> String {
         get(for: flag, type: String.self, defaultValue: defaultValue)

@@ -41,3 +41,16 @@ public enum VQFetchStatus: Int {
 
 public typealias VQFetchCompletion = (VQFetchStatus, NSError?) -> Void
 public typealias VQActivateCompletion = () -> Void
+
+@objc
+public class VQResource: NSObject {
+    @objc
+    public let type: String
+    @objc
+    public let value: String
+    
+    init(type: String, value: String) {
+        self.type = type
+        self.value = value
+    }
+}

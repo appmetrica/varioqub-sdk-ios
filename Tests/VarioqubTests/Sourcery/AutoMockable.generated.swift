@@ -52,6 +52,35 @@ class ConfigFetchableMock: ConfigFetchable {
     }
 
 }
+class ConfigFetcherOutputMock: ConfigFetcherOutput {
+
+
+
+
+    //MARK: - updateNetworkData
+
+    var updateNetworkDataThrowableError: Error?
+    var updateNetworkDataExpectation: XCTestExpectation?
+    var updateNetworkDataCallsCount = 0
+    var updateNetworkDataCalled: Bool {
+        return updateNetworkDataCallsCount > 0
+    }
+    var updateNetworkDataReceivedModel: NetworkDataModel?
+    var updateNetworkDataReceivedInvocations: [NetworkDataModel] = []
+    var updateNetworkDataClosure: ((NetworkDataModel) throws -> Void)?
+
+    func updateNetworkData(_ model: NetworkDataModel) throws {
+        defer { updateNetworkDataExpectation?.fulfill() }
+        if let error = updateNetworkDataThrowableError {
+            throw error
+        }
+        updateNetworkDataCallsCount += 1
+        updateNetworkDataReceivedModel = model
+        updateNetworkDataReceivedInvocations.append(model)
+        try updateNetworkDataClosure?(model)
+    }
+
+}
 class ConfigFetcherSettingsMock: ConfigFetcherSettings {
 
 
@@ -64,100 +93,117 @@ class ConfigFetcherSettingsMock: ConfigFetcherSettings {
 
 
 }
-class ConfigUpdaterControllableMock: ConfigUpdaterControllable {
+class FlagControllerInputMock: FlagControllerInput {
 
 
 
 
-    //MARK: - activateConfig
+    //MARK: - updateResponse
 
-    var activateConfigExpectation: XCTestExpectation?
-    var activateConfigCallsCount = 0
-    var activateConfigCalled: Bool {
-        return activateConfigCallsCount > 0
+    var updateResponseExpectation: XCTestExpectation?
+    var updateResponseCallsCount = 0
+    var updateResponseCalled: Bool {
+        return updateResponseCallsCount > 0
     }
-    var activateConfigClosure: (() -> Void)?
+    var updateResponseReceivedResponse: ResponseDTO?
+    var updateResponseReceivedInvocations: [ResponseDTO] = []
+    var updateResponseClosure: ((ResponseDTO) -> Void)?
 
-    func activateConfig() {
-        defer { activateConfigExpectation?.fulfill() }
-        activateConfigCallsCount += 1
-        activateConfigClosure?()
-    }
-
-}
-class ConfigUpdaterFlagReporterMock: ConfigUpdaterFlagReporter {
-
-
-
-
-    //MARK: - configApplied
-
-    var configAppliedOldConfigNewConfigExpectation: XCTestExpectation?
-    var configAppliedOldConfigNewConfigCallsCount = 0
-    var configAppliedOldConfigNewConfigCalled: Bool {
-        return configAppliedOldConfigNewConfigCallsCount > 0
-    }
-    var configAppliedOldConfigNewConfigReceivedArguments: (oldConfig: NetworkData?, newConfig: NetworkData)?
-    var configAppliedOldConfigNewConfigReceivedInvocations: [(oldConfig: NetworkData?, newConfig: NetworkData)] = []
-    var configAppliedOldConfigNewConfigClosure: ((NetworkData?, NetworkData) -> Void)?
-
-    func configApplied(oldConfig: NetworkData?, newConfig: NetworkData) {
-        defer { configAppliedOldConfigNewConfigExpectation?.fulfill() }
-        configAppliedOldConfigNewConfigCallsCount += 1
-        configAppliedOldConfigNewConfigReceivedArguments = (oldConfig: oldConfig, newConfig: newConfig)
-        configAppliedOldConfigNewConfigReceivedInvocations.append((oldConfig: oldConfig, newConfig: newConfig))
-        configAppliedOldConfigNewConfigClosure?(oldConfig, newConfig)
+    func updateResponse(_ response: ResponseDTO) {
+        defer { updateResponseExpectation?.fulfill() }
+        updateResponseCallsCount += 1
+        updateResponseReceivedResponse = response
+        updateResponseReceivedInvocations.append(response)
+        updateResponseClosure?(response)
     }
 
 }
-class ConfigUpdaterInputMock: ConfigUpdaterInput {
+class FlagControllerParamsInputMock: FlagControllerParamsInput {
 
 
 
 
-    //MARK: - updateNetworkData
+    //MARK: - updateRuntimeParams
 
-    var updateNetworkDataExpectation: XCTestExpectation?
-    var updateNetworkDataCallsCount = 0
-    var updateNetworkDataCalled: Bool {
-        return updateNetworkDataCallsCount > 0
+    var updateRuntimeParamsExpectation: XCTestExpectation?
+    var updateRuntimeParamsCallsCount = 0
+    var updateRuntimeParamsCalled: Bool {
+        return updateRuntimeParamsCallsCount > 0
     }
-    var updateNetworkDataReceivedData: NetworkData?
-    var updateNetworkDataReceivedInvocations: [NetworkData] = []
-    var updateNetworkDataClosure: ((NetworkData) -> Void)?
+    var updateRuntimeParamsReceivedParams: VarioqubParameters?
+    var updateRuntimeParamsReceivedInvocations: [VarioqubParameters] = []
+    var updateRuntimeParamsClosure: ((VarioqubParameters) -> Void)?
 
-    func updateNetworkData(_ data: NetworkData) {
-        defer { updateNetworkDataExpectation?.fulfill() }
-        updateNetworkDataCallsCount += 1
-        updateNetworkDataReceivedData = data
-        updateNetworkDataReceivedInvocations.append(data)
-        updateNetworkDataClosure?(data)
+    func updateRuntimeParams(_ params: VarioqubParameters) {
+        defer { updateRuntimeParamsExpectation?.fulfill() }
+        updateRuntimeParamsCallsCount += 1
+        updateRuntimeParamsReceivedParams = params
+        updateRuntimeParamsReceivedInvocations.append(params)
+        updateRuntimeParamsClosure?(params)
     }
 
-    //MARK: - updateDefaultsFlags
+    //MARK: - updateDeeplinkParams
 
-    var updateDefaultsFlagsExpectation: XCTestExpectation?
-    var updateDefaultsFlagsCallsCount = 0
-    var updateDefaultsFlagsCalled: Bool {
-        return updateDefaultsFlagsCallsCount > 0
+    var updateDeeplinkParamsExpectation: XCTestExpectation?
+    var updateDeeplinkParamsCallsCount = 0
+    var updateDeeplinkParamsCalled: Bool {
+        return updateDeeplinkParamsCallsCount > 0
     }
-    var updateDefaultsFlagsReceivedFlags: [VarioqubFlag: VarioqubValue]?
-    var updateDefaultsFlagsReceivedInvocations: [[VarioqubFlag: VarioqubValue]] = []
-    var updateDefaultsFlagsClosure: (([VarioqubFlag: VarioqubValue]) -> Void)?
+    var updateDeeplinkParamsReceivedParams: VarioqubParameters?
+    var updateDeeplinkParamsReceivedInvocations: [VarioqubParameters] = []
+    var updateDeeplinkParamsClosure: ((VarioqubParameters) -> Void)?
 
-    func updateDefaultsFlags(_ flags: [VarioqubFlag: VarioqubValue]) {
-        defer { updateDefaultsFlagsExpectation?.fulfill() }
-        updateDefaultsFlagsCallsCount += 1
-        updateDefaultsFlagsReceivedFlags = flags
-        updateDefaultsFlagsReceivedInvocations.append(flags)
-        updateDefaultsFlagsClosure?(flags)
+    func updateDeeplinkParams(_ params: VarioqubParameters) {
+        defer { updateDeeplinkParamsExpectation?.fulfill() }
+        updateDeeplinkParamsCallsCount += 1
+        updateDeeplinkParamsReceivedParams = params
+        updateDeeplinkParamsReceivedInvocations.append(params)
+        updateDeeplinkParamsClosure?(params)
+    }
+
+    //MARK: - updateDefaultValues
+
+    var updateDefaultValuesExpectation: XCTestExpectation?
+    var updateDefaultValuesCallsCount = 0
+    var updateDefaultValuesCalled: Bool {
+        return updateDefaultValuesCallsCount > 0
+    }
+    var updateDefaultValuesReceivedDefaultValues: [VarioqubFlag: VarioqubValue]?
+    var updateDefaultValuesReceivedInvocations: [[VarioqubFlag: VarioqubValue]] = []
+    var updateDefaultValuesClosure: (([VarioqubFlag: VarioqubValue]) -> Void)?
+
+    func updateDefaultValues(_ defaultValues: [VarioqubFlag: VarioqubValue]) {
+        defer { updateDefaultValuesExpectation?.fulfill() }
+        updateDefaultValuesCallsCount += 1
+        updateDefaultValuesReceivedDefaultValues = defaultValues
+        updateDefaultValuesReceivedInvocations.append(defaultValues)
+        updateDefaultValuesClosure?(defaultValues)
     }
 
 }
-class ConfigUpdaterOutputMock: ConfigUpdaterOutput {
+class FlagResolverInputMock: FlagResolverInput {
 
 
 
+
+    //MARK: - updateResources
+
+    var updateResourcesExpectation: XCTestExpectation?
+    var updateResourcesCallsCount = 0
+    var updateResourcesCalled: Bool {
+        return updateResourcesCallsCount > 0
+    }
+    var updateResourcesReceivedResources: [VarioqubResourceKey: VarioqubResource]?
+    var updateResourcesReceivedInvocations: [[VarioqubResourceKey: VarioqubResource]] = []
+    var updateResourcesClosure: (([VarioqubResourceKey: VarioqubResource]) -> Void)?
+
+    func updateResources(_ resources: [VarioqubResourceKey: VarioqubResource]) {
+        defer { updateResourcesExpectation?.fulfill() }
+        updateResourcesCallsCount += 1
+        updateResourcesReceivedResources = resources
+        updateResourcesReceivedInvocations.append(resources)
+        updateResourcesClosure?(resources)
+    }
 
     //MARK: - updateFlags
 
@@ -201,60 +247,6 @@ class FlagResolverOutputMock: FlagResolverOutput {
         testIdTriggeredReceivedTestId = testId
         testIdTriggeredReceivedInvocations.append(testId)
         testIdTriggeredClosure?(testId)
-    }
-
-}
-class NetworkDataStorableMock: NetworkDataStorable {
-
-
-    var isShouldNotifyExperimentChanged: Bool {
-        get { return underlyingIsShouldNotifyExperimentChanged }
-        set(value) { underlyingIsShouldNotifyExperimentChanged = value }
-    }
-    var underlyingIsShouldNotifyExperimentChanged: Bool!
-
-
-    //MARK: - saveNetworkData
-
-    var saveNetworkDataForExpectation: XCTestExpectation?
-    var saveNetworkDataForCallsCount = 0
-    var saveNetworkDataForCalled: Bool {
-        return saveNetworkDataForCallsCount > 0
-    }
-    var saveNetworkDataForReceivedArguments: (data: NetworkDataDTO?, key: NetworkDataKey)?
-    var saveNetworkDataForReceivedInvocations: [(data: NetworkDataDTO?, key: NetworkDataKey)] = []
-    var saveNetworkDataForClosure: ((NetworkDataDTO?, NetworkDataKey) -> Void)?
-
-    func saveNetworkData(_ data: NetworkDataDTO?, for key: NetworkDataKey) {
-        defer { saveNetworkDataForExpectation?.fulfill() }
-        saveNetworkDataForCallsCount += 1
-        saveNetworkDataForReceivedArguments = (data: data, key: key)
-        saveNetworkDataForReceivedInvocations.append((data: data, key: key))
-        saveNetworkDataForClosure?(data, key)
-    }
-
-    //MARK: - loadNetworkData
-
-    var loadNetworkDataForExpectation: XCTestExpectation?
-    var loadNetworkDataForCallsCount = 0
-    var loadNetworkDataForCalled: Bool {
-        return loadNetworkDataForCallsCount > 0
-    }
-    var loadNetworkDataForReceivedKey: NetworkDataKey?
-    var loadNetworkDataForReceivedInvocations: [NetworkDataKey] = []
-    var loadNetworkDataForReturnValue: NetworkDataDTO?
-    var loadNetworkDataForClosure: ((NetworkDataKey) -> NetworkDataDTO?)?
-
-    func loadNetworkData(for key: NetworkDataKey) -> NetworkDataDTO? {
-        defer { loadNetworkDataForExpectation?.fulfill() }
-        loadNetworkDataForCallsCount += 1
-        loadNetworkDataForReceivedKey = key
-        loadNetworkDataForReceivedInvocations.append(key)
-        if let loadNetworkDataForClosure = loadNetworkDataForClosure {
-            return loadNetworkDataForClosure(key)
-        } else {
-            return loadNetworkDataForReturnValue
-        }
     }
 
 }
@@ -357,21 +349,76 @@ public class NetworkRequestableMock: NetworkRequestable {
     }
 
 }
-public class RuntimeOptionableMock: RuntimeOptionable {
+class SlotHolderControlableMock: SlotHolderControlable {
 
-    public init() {}
 
-    public var sendEventOnChangeConfig: Bool {
-        get { return underlyingSendEventOnChangeConfig }
-        set(value) { underlyingSendEventOnChangeConfig = value }
+
+
+    //MARK: - activateConfig
+
+    var activateConfigExpectation: XCTestExpectation?
+    var activateConfigCallsCount = 0
+    var activateConfigCalled: Bool {
+        return activateConfigCallsCount > 0
     }
-    public var underlyingSendEventOnChangeConfig: Bool!
-    public var clientFeatures: ClientFeatures {
-        get { return underlyingClientFeatures }
-        set(value) { underlyingClientFeatures = value }
-    }
-    public var underlyingClientFeatures: ClientFeatures!
+    var activateConfigClosure: (() -> Void)?
 
+    func activateConfig() {
+        defer { activateConfigExpectation?.fulfill() }
+        activateConfigCallsCount += 1
+        activateConfigClosure?()
+    }
+
+}
+class SlotHolderInputMock: SlotHolderInput {
+
+
+
+
+    //MARK: - loadPendingData
+
+    var loadPendingDataExpectation: XCTestExpectation?
+    var loadPendingDataCallsCount = 0
+    var loadPendingDataCalled: Bool {
+        return loadPendingDataCallsCount > 0
+    }
+    var loadPendingDataReturnValue: NetworkDataModel!
+    var loadPendingDataClosure: (() -> NetworkDataModel)?
+
+    func loadPendingData() -> NetworkDataModel {
+        defer { loadPendingDataExpectation?.fulfill() }
+        loadPendingDataCallsCount += 1
+        if let loadPendingDataClosure = loadPendingDataClosure {
+            return loadPendingDataClosure()
+        } else {
+            return loadPendingDataReturnValue
+        }
+    }
+
+}
+class SlotHolderReportableMock: SlotHolderReportable {
+
+
+
+
+    //MARK: - configApplied
+
+    var configAppliedOldConfigNewConfigExpectation: XCTestExpectation?
+    var configAppliedOldConfigNewConfigCallsCount = 0
+    var configAppliedOldConfigNewConfigCalled: Bool {
+        return configAppliedOldConfigNewConfigCallsCount > 0
+    }
+    var configAppliedOldConfigNewConfigReceivedArguments: (oldConfig: SlotHolderConfigModel?, newConfig: SlotHolderConfigModel)?
+    var configAppliedOldConfigNewConfigReceivedInvocations: [(oldConfig: SlotHolderConfigModel?, newConfig: SlotHolderConfigModel)] = []
+    var configAppliedOldConfigNewConfigClosure: ((SlotHolderConfigModel?, SlotHolderConfigModel) -> Void)?
+
+    func configApplied(oldConfig: SlotHolderConfigModel?, newConfig: SlotHolderConfigModel) {
+        defer { configAppliedOldConfigNewConfigExpectation?.fulfill() }
+        configAppliedOldConfigNewConfigCallsCount += 1
+        configAppliedOldConfigNewConfigReceivedArguments = (oldConfig: oldConfig, newConfig: newConfig)
+        configAppliedOldConfigNewConfigReceivedInvocations.append((oldConfig: oldConfig, newConfig: newConfig))
+        configAppliedOldConfigNewConfigClosure?(oldConfig, newConfig)
+    }
 
 }
 class USDataTaskCreatorMock: USDataTaskCreator {
@@ -517,6 +564,28 @@ public class VarioqubReporterMock: VarioqubReporter {
     }
 
 }
+public class VarioqubRuntimeOptionableMock: VarioqubRuntimeOptionable {
+
+    public init() {}
+
+    public var sendEventOnChangeConfig: Bool {
+        get { return underlyingSendEventOnChangeConfig }
+        set(value) { underlyingSendEventOnChangeConfig = value }
+    }
+    public var underlyingSendEventOnChangeConfig: Bool!
+    public var clientFeatures: VarioqubClientFeatures {
+        get { return underlyingClientFeatures }
+        set(value) { underlyingClientFeatures = value }
+    }
+    public var underlyingClientFeatures: VarioqubClientFeatures!
+    public var runtimeParams: VarioqubParameters {
+        get { return underlyingRuntimeParams }
+        set(value) { underlyingRuntimeParams = value }
+    }
+    public var underlyingRuntimeParams: VarioqubParameters!
+
+
+}
 public class VarioqubSettingsFactoryMock: VarioqubSettingsFactory {
 
     public init() {}
@@ -562,46 +631,89 @@ public class VarioqubSettingsProtocolMock: VarioqubSettingsProtocol {
     public var reporterData: Data?
 
 
-    //MARK: - storeNetworkData
+    //MARK: - storeNetworkModel
 
-    public var storeNetworkDataForExpectation: XCTestExpectation?
-    public var storeNetworkDataForCallsCount = 0
-    public var storeNetworkDataForCalled: Bool {
-        return storeNetworkDataForCallsCount > 0
+    public var storeNetworkModelForExpectation: XCTestExpectation?
+    public var storeNetworkModelForCallsCount = 0
+    public var storeNetworkModelForCalled: Bool {
+        return storeNetworkModelForCallsCount > 0
     }
-    public var storeNetworkDataForReceivedArguments: (data: Data?, key: String)?
-    public var storeNetworkDataForReceivedInvocations: [(data: Data?, key: String)] = []
-    public var storeNetworkDataForClosure: ((Data?, String) -> Void)?
+    public var storeNetworkModelForReceivedArguments: (data: Data?, key: String)?
+    public var storeNetworkModelForReceivedInvocations: [(data: Data?, key: String)] = []
+    public var storeNetworkModelForClosure: ((Data?, String) -> Void)?
 
-    public func storeNetworkData(_ data: Data?, for key: String) {
-        defer { storeNetworkDataForExpectation?.fulfill() }
-        storeNetworkDataForCallsCount += 1
-        storeNetworkDataForReceivedArguments = (data: data, key: key)
-        storeNetworkDataForReceivedInvocations.append((data: data, key: key))
-        storeNetworkDataForClosure?(data, key)
+    public func storeNetworkModel(_ data: Data?, for key: String) {
+        defer { storeNetworkModelForExpectation?.fulfill() }
+        storeNetworkModelForCallsCount += 1
+        storeNetworkModelForReceivedArguments = (data: data, key: key)
+        storeNetworkModelForReceivedInvocations.append((data: data, key: key))
+        storeNetworkModelForClosure?(data, key)
     }
 
-    //MARK: - loadNetworkData
+    //MARK: - loadNetworkModel
 
-    public var loadNetworkDataForExpectation: XCTestExpectation?
-    public var loadNetworkDataForCallsCount = 0
-    public var loadNetworkDataForCalled: Bool {
-        return loadNetworkDataForCallsCount > 0
+    public var loadNetworkModelForExpectation: XCTestExpectation?
+    public var loadNetworkModelForCallsCount = 0
+    public var loadNetworkModelForCalled: Bool {
+        return loadNetworkModelForCallsCount > 0
     }
-    public var loadNetworkDataForReceivedKey: String?
-    public var loadNetworkDataForReceivedInvocations: [String] = []
-    public var loadNetworkDataForReturnValue: Data?
-    public var loadNetworkDataForClosure: ((String) -> Data?)?
+    public var loadNetworkModelForReceivedKey: String?
+    public var loadNetworkModelForReceivedInvocations: [String] = []
+    public var loadNetworkModelForReturnValue: Data?
+    public var loadNetworkModelForClosure: ((String) -> Data?)?
 
-    public func loadNetworkData(for key: String) -> Data? {
-        defer { loadNetworkDataForExpectation?.fulfill() }
-        loadNetworkDataForCallsCount += 1
-        loadNetworkDataForReceivedKey = key
-        loadNetworkDataForReceivedInvocations.append(key)
-        if let loadNetworkDataForClosure = loadNetworkDataForClosure {
-            return loadNetworkDataForClosure(key)
+    public func loadNetworkModel(for key: String) -> Data? {
+        defer { loadNetworkModelForExpectation?.fulfill() }
+        loadNetworkModelForCallsCount += 1
+        loadNetworkModelForReceivedKey = key
+        loadNetworkModelForReceivedInvocations.append(key)
+        if let loadNetworkModelForClosure = loadNetworkModelForClosure {
+            return loadNetworkModelForClosure(key)
         } else {
-            return loadNetworkDataForReturnValue
+            return loadNetworkModelForReturnValue
+        }
+    }
+
+    //MARK: - storeNetworkDSOv0
+
+    public var storeNetworkDSOv0ForExpectation: XCTestExpectation?
+    public var storeNetworkDSOv0ForCallsCount = 0
+    public var storeNetworkDSOv0ForCalled: Bool {
+        return storeNetworkDSOv0ForCallsCount > 0
+    }
+    public var storeNetworkDSOv0ForReceivedArguments: (data: Data?, key: String)?
+    public var storeNetworkDSOv0ForReceivedInvocations: [(data: Data?, key: String)] = []
+    public var storeNetworkDSOv0ForClosure: ((Data?, String) -> Void)?
+
+    public func storeNetworkDSOv0(_ data: Data?, for key: String) {
+        defer { storeNetworkDSOv0ForExpectation?.fulfill() }
+        storeNetworkDSOv0ForCallsCount += 1
+        storeNetworkDSOv0ForReceivedArguments = (data: data, key: key)
+        storeNetworkDSOv0ForReceivedInvocations.append((data: data, key: key))
+        storeNetworkDSOv0ForClosure?(data, key)
+    }
+
+    //MARK: - loadNetworkDSOv0
+
+    public var loadNetworkDSOv0ForExpectation: XCTestExpectation?
+    public var loadNetworkDSOv0ForCallsCount = 0
+    public var loadNetworkDSOv0ForCalled: Bool {
+        return loadNetworkDSOv0ForCallsCount > 0
+    }
+    public var loadNetworkDSOv0ForReceivedKey: String?
+    public var loadNetworkDSOv0ForReceivedInvocations: [String] = []
+    public var loadNetworkDSOv0ForReturnValue: Data?
+    public var loadNetworkDSOv0ForClosure: ((String) -> Data?)?
+
+    public func loadNetworkDSOv0(for key: String) -> Data? {
+        defer { loadNetworkDSOv0ForExpectation?.fulfill() }
+        loadNetworkDSOv0ForCallsCount += 1
+        loadNetworkDSOv0ForReceivedKey = key
+        loadNetworkDSOv0ForReceivedInvocations.append(key)
+        if let loadNetworkDSOv0ForClosure = loadNetworkDSOv0ForClosure {
+            return loadNetworkDSOv0ForClosure(key)
+        } else {
+            return loadNetworkDSOv0ForReturnValue
         }
     }
 

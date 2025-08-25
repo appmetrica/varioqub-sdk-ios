@@ -22,72 +22,6 @@ public protocol VQSettingsFactory: NSObjectProtocol {
 }
 
 @objc
-public class VQClientFeatures: NSObject, NSCopying, NSMutableCopying {
-    
-    var clientFeatures: ClientFeatures
-    
-    init(clientFeatures: ClientFeatures) {
-        self.clientFeatures = clientFeatures
-    }
-    
-    @objc
-    public required init(dictionary: [String: String]) {
-        self.clientFeatures = .init(dictionary: dictionary)
-        super.init()
-    }
-    
-    @objc
-    public var features: [String: String] { return clientFeatures.features }
-    
-    public func copy(with zone: NSZone? = nil) -> Any {
-        return self
-    }
-    
-    public func mutableCopy(with zone: NSZone? = nil) -> Any {
-        return VQMutableClientFeatures(clientFeatures: clientFeatures)
-    }
-    
-    @objc
-    public class func clientFeatures(with dict: [String: String]) -> Self {
-        return Self.init(dictionary: dict)
-    }
-    
-}
-
-@objc
-public final class VQMutableClientFeatures: VQClientFeatures {
-    
-    @objc
-    public func setFeature(_ feature: String, forKey key: String) {
-        clientFeatures.setFeature(feature, forKey: key)
-    }
-    
-    @objc
-    public func removeFeature(forKey key: String) {
-        clientFeatures.removeFeature(forKey: key)
-    }
-    
-    @objc
-    public func mergeWith(_ other: [String: String]) {
-        clientFeatures.mergeWith(other)
-    }
-    
-    @objc
-    public func clearFeatures() {
-        clientFeatures.clearFeatures()
-    }
-    
-    public override func copy(with zone: NSZone? = nil) -> Any {
-        return VQClientFeatures(clientFeatures: clientFeatures)
-    }
-    
-    public override func mutableCopy(with zone: NSZone? = nil) -> Any {
-        return VQMutableClientFeatures(clientFeatures: clientFeatures)
-    }
-    
-}
-
-@objc
 public final class VQConfig: NSObject {
 
     @objc
@@ -100,7 +34,7 @@ public final class VQConfig: NSObject {
     public var fetchThrottle: TimeInterval = 0
 
     @objc
-    public var initialClientFeatures: VQClientFeatures?
+    public var initialClientFeatures: VQVarioqubClientFeatures?
 
     @objc
     public var varioqubQueue: DispatchQueue?

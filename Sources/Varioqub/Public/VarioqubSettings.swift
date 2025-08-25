@@ -16,11 +16,15 @@ public protocol VarioqubSettingsProtocol: AnyObject {
     /// The serialized data for the reporter.
     var reporterData: Data? { get set }
 
+    func storeNetworkModel(_ data: Data?, for key: String)
+    
+    func loadNetworkModel(for key: String) -> Data?
+    
     /// Stores the config fetched from the server into the key-value storage identified by the key.
-    func storeNetworkData(_ data: Data?, for key: String)
+    func storeNetworkDSOv0(_ data: Data?, for key: String)
 
     /// Gets the config by the key.
-    func loadNetworkData(for key: String) -> Data?
+    func loadNetworkDSOv0(for key: String) -> Data?
 }
 
 // sourcery: AutoMockable

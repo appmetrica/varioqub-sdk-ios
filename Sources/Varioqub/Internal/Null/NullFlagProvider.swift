@@ -1,5 +1,5 @@
 
-final class NullFlagProvider: FlagProvider {
+final class NullFlagProvider: VarioqubFlagProvider {
     
     var allItems: [VarioqubFlag : VarioqubConfigValue] {
         [:]
