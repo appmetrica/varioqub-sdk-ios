@@ -3,7 +3,8 @@
 
 import PackageDescription
 
-let useSpmExternalPackages = false
+let usedSource: DependencySource = .regular
+let spmExternalScope = "spm-external"
 
 let swiftCompilerSettings: [SwiftSetting] = [
     .define("VQ_MODULES"),
@@ -29,13 +30,13 @@ enum VarioqubProduct: String, CaseIterable {
 }
 
 enum ExternalDependency: String, CaseIterable {
+    case protobuf = "swift-protobuf"
     case swiftLog = "swift-log"
-    case protobuf = "protobuf"
     
-    var versions: Range<Version> {
+    var version: DependencyVersion {
         switch self {
-        case .swiftLog: return "1.5.2"..<"2.0.0"
-        case .protobuf: return "1.21.0"..<"2.0.0"
+        case .swiftLog: return .range("1.5.2"..<"2.0.0")
+        case .protobuf: return .range("1.21.0"..<"2.0.0")
         }
     }
     
@@ -46,35 +47,58 @@ enum ExternalDependency: String, CaseIterable {
         }
     }
     
-    var spmExternalPackageName: String {
+    var localPackageName: String {
         switch self {
-        case .swiftLog: return "swift-log"
-        case .protobuf: return "SwiftProtobuf"
+        case .swiftLog: return "\(spmExternalScope).swift-log"
+        case .protobuf: return "\(spmExternalScope).SwiftProtobuf"
         }
     }
     
-    var targetDependency: Target.Dependency {
+    var spmExternalPackageName: String {
         switch self {
-        case .swiftLog: return .product(name: "Logging", package: packageName)
-        case .protobuf: return .product(name: "SwiftProtobuf", package: packageName)
+        case .swiftLog: return "\(spmExternalScope).swift-log"
+        case .protobuf: return "\(spmExternalScope).SwiftProtobuf"
         }
     }
     
     var regularPackageDependency: Package.Dependency {
         switch self {
-        case .swiftLog: return .package(url: "https://github.com/apple/swift-log", versions)
-        case .protobuf: return .package(url: "https://github.com/apple/swift-protobuf", versions)
+        case .swiftLog: return .package(url: "https://github.com/apple/swift-log", version: version)
+        case .protobuf: return .package(url: "https://github.com/apple/swift-protobuf", version: version)
         }
     }
     
     var spmExternalPackageDependency: Package.Dependency {
         switch self {
-        case .swiftLog: return .package(id: "spm-external.swift-log", versions)
-        case .protobuf: return .package(id: "spm-external.SwiftProtobuf", versions)
+        case .swiftLog: return .package(id: "\(spmExternalScope).swift-log", version: version)
+        case .protobuf: return .package(id: "\(spmExternalScope).SwiftProtobuf", version: version)
         }
     }
     
+    var localPackageDependency: Package.Dependency {
+        switch self {
+        case .swiftLog: return .package(id: "\(spmExternalScope).swift-log", version: version)
+        case .protobuf: return .package(id: "\(spmExternalScope).SwiftProtobuf", version: version)
+        }
+    }
 }
+
+enum ExternalTargetDependency: String, CaseIterable {
+    case swiftLog = "Logging"
+    case protobuf = "SwiftProtobuf"
+    
+    var package: ExternalDependency {
+        switch self {
+        case .swiftLog: return .swiftLog
+        case .protobuf: return .protobuf
+        }
+    }
+    
+    var targetDependency: Target.Dependency {
+        .product(name: rawValue, package: package.packageName)
+    }
+}
+
 
 let targets: [Target] = [
     .target(varioqubTarget: .utils, includePrivacyManifest: true),
@@ -124,11 +148,25 @@ extension VarioqubProduct {
 extension ExternalDependency {
     
     var packageName: String {
-        useSpmExternalPackages ? "spm-external.\(spmExternalPackageName)" : regularPackageName
+        switch usedSource {
+        case .local:
+            return localPackageName
+        case .regular:
+            return regularPackageName
+        case .spmExternal:
+            return spmExternalPackageName
+        }
     }
     
     var packageDependency: Package.Dependency {
-        useSpmExternalPackages ? spmExternalPackageDependency : regularPackageDependency
+        switch usedSource {
+        case .local:
+            return localPackageDependency
+        case .regular:
+            return regularPackageDependency
+        case .spmExternal:
+            return spmExternalPackageDependency
+        }
     }
 }
 
@@ -138,7 +176,7 @@ extension Target {
         varioqubTarget: VarioqubTarget,
         resources: [Resource]? = nil,
         dependencies: [VarioqubTarget] = [],
-        externalDependencies: [ExternalDependency] = [],
+        externalDependencies: [ExternalTargetDependency] = [],
         includePrivacyManifest: Bool = true
     ) -> Target {
         var res: [Resource] = resources ?? []
@@ -157,7 +195,7 @@ extension Target {
     static func testTarget(
         varioqubTarget: VarioqubTarget,
         dependencies: [VarioqubTarget] = [],
-        externalDependencies: [ExternalDependency] = []
+        externalDependencies: [ExternalTargetDependency] = []
     ) -> Target {
         let allDeps = [varioqubTarget.dependency] + dependencies.map(\.dependency) + externalDependencies.map(\.targetDependency)
         return .testTarget(
@@ -167,5 +205,35 @@ extension Target {
             swiftSettings: swiftCompilerSettings
         )
     }
+}
+
+extension Package.Dependency {
+    static func package(id: String, version: DependencyVersion) -> Package.Dependency {
+        switch version {
+        case .exact(let v):
+            return .package(id: id, exact: v)
+        case .range(let r):
+            return .package(id: id, r)
+        }
+    }
     
+    static func package(url: String, version: DependencyVersion) -> Package.Dependency {
+        switch version {
+        case .exact(let v):
+            return .package(url: url, exact: v)
+        case .range(let r):
+            return .package(url: url, r)
+        }
+    }
+}
+
+enum DependencyVersion {
+    case exact(Version)
+    case range(Range<PackageDescription.Version>)
+}
+
+enum DependencySource {
+    case local
+    case regular
+    case spmExternal
 }
