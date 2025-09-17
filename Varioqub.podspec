@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
   s.name = "Varioqub"
-  s.version = '1.0.1'
+  s.version = '1.1.0'
   s.summary = "Varioqub"
 
   s.homepage = "https://varioqub.ru"
@@ -30,7 +30,7 @@ Pod::Spec.new do |s|
       "Sources/VarioqubUtils/**/*.swift",
     ]
     
-    core.dependency 'SwiftProtobuf'
+    core.dependency 'SwiftProtobuf', '~> 1.21'
   end
 
   s.subspec "ObjC" do |objc|
