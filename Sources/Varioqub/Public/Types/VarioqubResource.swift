@@ -1,7 +1,13 @@
 
 public struct VarioqubResource: Equatable {
+    //TODO: enum
     public var type: String
     public var value: String
+    
+    public init(type: String, value: String) {
+        self.type = type
+        self.value = value
+    }
 }
 
 /// A struct that defines the flag name.

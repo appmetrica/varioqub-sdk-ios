@@ -282,7 +282,7 @@ extension VarioqubFacade: VarioqubResourcesProvider {
 extension VarioqubFacade: VarioqubDeeplinkInput {
     
     public func handleDeeplink(_ url: URL) -> Bool {
-        fatalError()
+        return _mainContainer.deeplinkInput.handleDeeplink(url)
     }
     
 }
