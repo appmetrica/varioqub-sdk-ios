@@ -11,7 +11,7 @@ Pod::Spec.new do |s|
   s.tvos.deployment_target = '12.0'
   s.source = { :git => "https://github.com/appmetrica/varioqub-sdk-ios.git", :tag=>s.version.to_s }
 
-  s.swift_versions = "5.7"
+  s.swift_versions = "5.8"
   s.pod_target_xcconfig = {
       'APPLICATION_EXTENSION_API_ONLY' => 'YES',
       'DEFINES_MODULE' => 'YES',
@@ -30,7 +30,7 @@ Pod::Spec.new do |s|
       "Sources/VarioqubUtils/**/*.swift",
     ]
     
-    core.dependency 'SwiftProtobuf', '~> 1.21'
+    core.dependency 'SwiftProtobuf', '~> 1.31'
   end
 
   s.subspec "ObjC" do |objc|
