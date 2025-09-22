@@ -7,8 +7,8 @@ Pod::Spec.new do |s|
   s.homepage = "https://varioqub.ru"
   s.license = { :type => 'MIT', :file => 'LICENSE' }
   s.authors = { "AppMetrica" => "admin@appmetrica.io" }
-  s.ios.deployment_target = '12.0'
-  s.tvos.deployment_target = '12.0'
+  s.ios.deployment_target = '13.0'
+  s.tvos.deployment_target = '13.0'
   s.source = { :git => "https://github.com/appmetrica/varioqub-sdk-ios.git", :tag=>s.version.to_s }
 
   s.swift_versions = "5.8"
