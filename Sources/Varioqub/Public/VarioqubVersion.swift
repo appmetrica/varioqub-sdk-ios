@@ -3,5 +3,5 @@
 import VarioqubUtils
 #endif
 
-public let varioqubVersion: Version = "1.1.1"
+public let varioqubVersion: Version = "1.1.2"
 
