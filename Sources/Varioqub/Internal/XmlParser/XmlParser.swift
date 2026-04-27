@@ -14,7 +14,7 @@ final class XmlParser: NSObject {
     private var state: State = .global
 
     private var currentKey: String?
-    private var currentValue: String?
+    private var currentValue: String = ""
 
     private let source: XmlParserSource
 
@@ -62,7 +62,7 @@ extension XmlParser: XMLParserDelegate {
                 transition.moveIf(tagName: "defaults", to: .defaults)
             case .defaults:
                 transition.moveIf(tagName: "entry", to: .entry)
-                currentValue = nil
+                currentValue = ""
                 currentKey = nil
             case .entry:
                 transition.moveIf(tagName: "key", to: .key)
@@ -84,7 +84,7 @@ extension XmlParser: XMLParserDelegate {
                 transition.moveIf(tagName: "defaults", to: .global)
             case .entry:
                 transition.moveIf(tagName: "entry", to: .defaults)
-                if let currentValue = currentValue, let currentKey = currentKey {
+                if let currentKey = currentKey {
                     defaults[.init(rawValue: currentKey)] = .init(string: currentValue)
                 } else {
                     throw XmlParserError.xmlStructure
@@ -106,7 +106,7 @@ extension XmlParser: XMLParserDelegate {
         case .key:
             currentKey = (currentKey ?? "") + string
         case .value:
-            currentValue = (currentValue ?? "") + string
+            currentValue = currentValue + string
         default:
             break
         }

@@ -53,8 +53,8 @@ final class XmlParserTests: XCTestCase {
                      """
 
     let invalidTags = """
-                      <defaults>
-                              <metrica_entry>
+                       <defaults>
+                               <metrica_entry>
                                   <abc>first_button_color</abc>
                                   <value>green</value>
                               </metrica_entry>
@@ -70,8 +70,17 @@ final class XmlParserTests: XCTestCase {
                                   <key>third_button_padding_top</key>
                                   <cba>10</cba>
                               </abc>
-                          </defaults>
-                      """
+                           </defaults>
+                       """
+
+    let emptyValue = """
+                     <defaults>
+                         <entry>
+                             <key>empty_value</key>
+                             <value/>
+                         </entry>
+                     </defaults>
+                     """
 
     override func setUp() {
         super.setUp()
@@ -94,5 +103,12 @@ final class XmlParserTests: XCTestCase {
         let parser = XmlParser(data: invalidTags.data(using: .utf8)!)
 
         XCTAssertThrowsError(try parser.parse())
+    }
+
+    func testParsingEmptyValueTag() throws {
+        let parser = XmlParser(data: emptyValue.data(using: .utf8)!)
+        let result = try parser.parse()
+
+        XCTAssertEqual(result, [.init(rawValue: "empty_value"): .init(string: "")])
     }
 }
