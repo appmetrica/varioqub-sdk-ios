@@ -20,7 +20,7 @@ enum VarioqubTarget: String, CaseIterable {
 enum VarioqubProduct: String, CaseIterable {
     case varioqub = "Varioqub"
     case varioqubObjC = "VarioqubObjC"
-    
+
     var targets: [VarioqubTarget] {
         switch self {
         case .varioqub: return [.utils, .network, .varioqub]
@@ -32,49 +32,49 @@ enum VarioqubProduct: String, CaseIterable {
 enum ExternalDependency: String, CaseIterable {
     case protobuf = "swift-protobuf"
     case swiftLog = "swift-log"
-    
+
     var version: DependencyVersion {
         switch self {
         case .swiftLog: return .range("1.5.2"..<"2.0.0")
         case .protobuf: return .range("1.21.0"..<"2.0.0")
         }
     }
-    
+
     var regularPackageName: String {
         switch self {
         case .swiftLog: return "swift-log"
         case .protobuf: return "swift-protobuf"
         }
     }
-    
+
     var localPackageName: String {
         switch self {
         case .swiftLog: return "\(spmExternalScope).swift-log"
         case .protobuf: return "\(spmExternalScope).SwiftProtobuf"
         }
     }
-    
+
     var spmExternalPackageName: String {
         switch self {
         case .swiftLog: return "\(spmExternalScope).swift-log"
         case .protobuf: return "\(spmExternalScope).SwiftProtobuf"
         }
     }
-    
+
     var regularPackageDependency: Package.Dependency {
         switch self {
         case .swiftLog: return .package(url: "https://github.com/apple/swift-log", version: version)
         case .protobuf: return .package(url: "https://github.com/apple/swift-protobuf", version: version)
         }
     }
-    
+
     var spmExternalPackageDependency: Package.Dependency {
         switch self {
         case .swiftLog: return .package(id: "\(spmExternalScope).swift-log", version: version)
         case .protobuf: return .package(id: "\(spmExternalScope).SwiftProtobuf", version: version)
         }
     }
-    
+
     var localPackageDependency: Package.Dependency {
         switch self {
         case .swiftLog: return .package(id: "\(spmExternalScope).swift-log", version: version)
@@ -86,14 +86,14 @@ enum ExternalDependency: String, CaseIterable {
 enum ExternalTargetDependency: String, CaseIterable {
     case swiftLog = "Logging"
     case protobuf = "SwiftProtobuf"
-    
+
     var package: ExternalDependency {
         switch self {
         case .swiftLog: return .swiftLog
         case .protobuf: return .protobuf
         }
     }
-    
+
     var targetDependency: Target.Dependency {
         .product(name: rawValue, package: package.packageName)
     }
@@ -103,17 +103,17 @@ enum ExternalTargetDependency: String, CaseIterable {
 let targets: [Target] = [
     .target(varioqubTarget: .utils, includePrivacyManifest: true),
     .testTarget(varioqubTarget: .utils),
-    
+
     .target(varioqubTarget: .network, dependencies: [.utils], externalDependencies: [.swiftLog]),
     .testTarget(varioqubTarget: .network),
-    
+
     .target(
         varioqubTarget: .varioqub,
         dependencies: [.utils, .network],
         externalDependencies: [.swiftLog, .protobuf]
     ),
     .testTarget(varioqubTarget: .varioqub),
-    
+
     .target(varioqubTarget: .objc, dependencies: [.varioqub]),
 ]
 
@@ -146,7 +146,7 @@ extension VarioqubProduct {
 }
 
 extension ExternalDependency {
-    
+
     var packageName: String {
         switch usedSource {
         case .local:
@@ -157,7 +157,7 @@ extension ExternalDependency {
             return spmExternalPackageName
         }
     }
-    
+
     var packageDependency: Package.Dependency {
         switch usedSource {
         case .local:
@@ -171,7 +171,7 @@ extension ExternalDependency {
 }
 
 extension Target {
-    
+
     static func target(
         varioqubTarget: VarioqubTarget,
         resources: [Resource]? = nil,
@@ -191,7 +191,7 @@ extension Target {
             swiftSettings: swiftCompilerSettings
         )
     }
-    
+
     static func testTarget(
         varioqubTarget: VarioqubTarget,
         dependencies: [VarioqubTarget] = [],
@@ -216,7 +216,7 @@ extension Package.Dependency {
             return .package(id: id, r)
         }
     }
-    
+
     static func package(url: String, version: DependencyVersion) -> Package.Dependency {
         switch version {
         case .exact(let v):
