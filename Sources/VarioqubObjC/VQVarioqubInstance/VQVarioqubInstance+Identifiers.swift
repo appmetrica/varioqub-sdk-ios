@@ -4,9 +4,9 @@ import Varioqub
 #endif
 
 @objc
-extension VQVarioqubInstance {
+public extension VQVarioqubInstance {
 
-    public var varioqubId: String? {
+    var varioqubId: String? {
         originalInstance.varioqubId
     }
 

@@ -6,9 +6,9 @@ import Varioqub
 
 
 @objc
-extension VQVarioqubFacade {
+public extension VQVarioqubFacade {
 
-    public var varioqubId: String? {
+    var varioqubId: String? {
         mainInstance.varioqubId
     }
 

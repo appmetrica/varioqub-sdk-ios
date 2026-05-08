@@ -4,7 +4,7 @@ import Varioqub
 #endif
 
 @objc
-extension VQVarioqubInstance {
+public extension VQVarioqubInstance {
     
     var allItems: [VQFlag: VQConfigValue] {
         var result: [VQFlag: VQConfigValue] = [:]

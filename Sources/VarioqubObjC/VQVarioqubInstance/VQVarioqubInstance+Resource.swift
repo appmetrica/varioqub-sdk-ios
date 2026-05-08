@@ -5,7 +5,7 @@ import Varioqub
 #endif
 
 @objc
-extension VQVarioqubInstance {
+public extension VQVarioqubInstance {
 
     func resource(for key: String) -> VQResource? {
         let originalResource = originalInstance.resource(for: VarioqubResourceKey(rawValue: key))
