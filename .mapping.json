@@ -12,7 +12,6 @@
   "CONTRIBUTING.md":"mobile/metrika/ios/varioqub-sdk/varioqub/CONTRIBUTING.md",
   "LICENSE":"mobile/metrika/ios/varioqub-sdk/varioqub/LICENSE",
   "Mintfile":"mobile/metrika/ios/varioqub-sdk/varioqub/Mintfile",
-  "Package.resolved":"mobile/metrika/ios/varioqub-sdk/varioqub/Package.resolved",
   "Package.swift":"mobile/metrika/ios/varioqub-sdk/varioqub/Package.swift",
   "README.md":"mobile/metrika/ios/varioqub-sdk/varioqub/README.md",
   "Sources/Varioqub/Config/Configuration.swift":"mobile/metrika/ios/varioqub-sdk/varioqub/Sources/Varioqub/Config/Configuration.swift",

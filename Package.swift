@@ -1,239 +1,182 @@
-// swift-tools-version:5.7
-// The swift-tools-version declares the minimum version of Swift required to build this package.
+// swift-tools-version:5.8
 
 import PackageDescription
+import Foundation
 
-let usedSource: DependencySource = .regular
-let spmExternalScope = "spm-external"
+// MARK: - Dependencies
 
-let swiftCompilerSettings: [SwiftSetting] = [
-    .define("VQ_MODULES"),
-]
-
-enum VarioqubTarget: String, CaseIterable {
-    case utils = "VarioqubUtils"
-    case network = "VarioqubNetwork"
-    case varioqub = "Varioqub"
-    case objc = "VarioqubObjC"
+func hasFile(_ path: String) -> Bool {
+    FileManager.default.fileExists(
+        atPath: URL(fileURLWithPath: #file)
+            .deletingLastPathComponent()
+            .appendingPathComponent(path)
+            .path
+    )
 }
 
-enum VarioqubProduct: String, CaseIterable {
-    case varioqub = "Varioqub"
-    case varioqubObjC = "VarioqubObjC"
+// DO NOT CHANGE DEFAULT VALUES IN TRUNK
+let useRegistry = hasFile(".spm-use-registry") || false
 
-    var targets: [VarioqubTarget] {
-        switch self {
-        case .varioqub: return [.utils, .network, .varioqub]
-        case .varioqubObjC: return [.utils, .network, .varioqub, .objc]
-        }
-    }
-}
+struct ExternalDependency {
+    let package: String
+    let dependency: Package.Dependency
 
-enum ExternalDependency: String, CaseIterable {
-    case protobuf = "swift-protobuf"
-    case swiftLog = "swift-log"
-
-    var version: DependencyVersion {
-        switch self {
-        case .swiftLog: return .range("1.5.2"..<"2.0.0")
-        case .protobuf: return .range("1.21.0"..<"2.0.0")
-        }
-    }
-
-    var regularPackageName: String {
-        switch self {
-        case .swiftLog: return "swift-log"
-        case .protobuf: return "swift-protobuf"
+    init(url: String, registryId: String, version: VersionSpec) {
+        if useRegistry {
+            self.package = registryId
+            self.dependency = switch version {
+            case .upToNextMajor(from: let from): .package(id: self.package, .upToNextMajor(from: from))
+            }
+        } else {
+            self.package = URL(string: url)!.lastPathComponent
+            self.dependency = switch version {
+            case .upToNextMajor(from: let from): .package(url: url, .upToNextMajor(from: from))
+            }
         }
     }
 
-    var localPackageName: String {
-        switch self {
-        case .swiftLog: return "\(spmExternalScope).swift-log"
-        case .protobuf: return "\(spmExternalScope).SwiftProtobuf"
-        }
-    }
-
-    var spmExternalPackageName: String {
-        switch self {
-        case .swiftLog: return "\(spmExternalScope).swift-log"
-        case .protobuf: return "\(spmExternalScope).SwiftProtobuf"
-        }
-    }
-
-    var regularPackageDependency: Package.Dependency {
-        switch self {
-        case .swiftLog: return .package(url: "https://github.com/apple/swift-log", version: version)
-        case .protobuf: return .package(url: "https://github.com/apple/swift-protobuf", version: version)
-        }
-    }
-
-    var spmExternalPackageDependency: Package.Dependency {
-        switch self {
-        case .swiftLog: return .package(id: "\(spmExternalScope).swift-log", version: version)
-        case .protobuf: return .package(id: "\(spmExternalScope).SwiftProtobuf", version: version)
-        }
-    }
-
-    var localPackageDependency: Package.Dependency {
-        switch self {
-        case .swiftLog: return .package(id: "\(spmExternalScope).swift-log", version: version)
-        case .protobuf: return .package(id: "\(spmExternalScope).SwiftProtobuf", version: version)
-        }
+    enum VersionSpec {
+        case upToNextMajor(from: Version)
     }
 }
 
-enum ExternalTargetDependency: String, CaseIterable {
-    case swiftLog = "Logging"
-    case protobuf = "SwiftProtobuf"
+enum SwiftLog {
+    private static let dep = ExternalDependency(
+        url: "https://github.com/apple/swift-log",
+        registryId: "spm-external.swift-log",
+        version: .upToNextMajor(from: "1.5.2"),
+    )
 
-    var package: ExternalDependency {
-        switch self {
-        case .swiftLog: return .swiftLog
-        case .protobuf: return .protobuf
-        }
+    static let dependency: Package.Dependency = dep.dependency
+    static let logging: Target.Dependency = .product(name: "Logging", package: dep.package)
+}
+
+enum Protobuf {
+    private static let dep = ExternalDependency(
+        url: "https://github.com/apple/swift-protobuf",
+        registryId: "spm-external.SwiftProtobuf",
+        version: .upToNextMajor(from: "1.21.0"),
+    )
+
+    static let dependency: Package.Dependency = dep.dependency
+    static let protobuf: Target.Dependency = .product(name: "SwiftProtobuf", package: dep.package)
+}
+
+// MARK: - Module
+
+protocol ModuleDependency {
+    var asTargetDependency: Target.Dependency { get }
+}
+
+extension String : ModuleDependency {
+    var asTargetDependency: Target.Dependency { .target(name: self) }
+}
+
+extension Target.Dependency : ModuleDependency {
+    var asTargetDependency: Target.Dependency { self }
+}
+
+struct Module {
+    let name: String
+    let dependencies: [Target.Dependency]
+    let hasTests: Bool
+    let testDependencies: [Target.Dependency]
+
+    init(name: String, dependencies: [ModuleDependency], hasTests: Bool = true, testDependencies: [ModuleDependency] = []) {
+        self.name = name
+        self.dependencies = dependencies.map(\.asTargetDependency)
+        self.hasTests = hasTests
+        self.testDependencies = testDependencies.map(\.asTargetDependency)
     }
 
-    var targetDependency: Target.Dependency {
-        .product(name: rawValue, package: package.packageName)
+    func toTargets() -> [Target] {
+        var targets: [Target] = [
+            .target(
+                name: name,
+                dependencies: dependencies,
+                resources: [.copy("Resources/PrivacyInfo.xcprivacy")],
+                swiftSettings: [.define("VQ_MODULES")],
+            )
+        ]
+        if hasTests {
+            targets.append(
+                .testTarget(
+                    name: "\(name)Tests",
+                    dependencies: [.target(name: name)] + dependencies + testDependencies,
+                    swiftSettings: [.define("VQ_MODULES")],
+                )
+            )
+        }
+        return targets
     }
 }
 
+extension Module {
+    static let varioqub = "Varioqub"
+    static let network = "VarioqubNetwork"
+    static let objc = "VarioqubObjC"
+    static let utils = "VarioqubUtils"
+}
 
-let targets: [Target] = [
-    .target(varioqubTarget: .utils, includePrivacyManifest: true),
-    .testTarget(varioqubTarget: .utils),
+// MARK: - Varioqub Module
 
-    .target(varioqubTarget: .network, dependencies: [.utils], externalDependencies: [.swiftLog]),
-    .testTarget(varioqubTarget: .network),
-
-    .target(
-        varioqubTarget: .varioqub,
-        dependencies: [.utils, .network],
-        externalDependencies: [.swiftLog, .protobuf]
-    ),
-    .testTarget(varioqubTarget: .varioqub),
-
-    .target(varioqubTarget: .objc, dependencies: [.varioqub]),
-]
-
-let package = Package(
-        name: "Varioqub",
-        platforms: [
-            .iOS(.v13),
-            .tvOS(.v13),
-        ],
-        products: VarioqubProduct.allCases.map(\.product),
-        dependencies: ExternalDependency.allCases.map(\.packageDependency),
-        targets: targets
+let varioqub = Module(
+    name: Module.varioqub,
+    dependencies: [
+        Module.utils,
+        Module.network,
+        SwiftLog.logging,
+        Protobuf.protobuf,
+    ],
 )
 
-extension VarioqubTarget {
-    var name: String { rawValue }
-    var testsName: String { rawValue + "Tests" }
-    var path: String { "Sources/\(rawValue)" }
-    var testsPath: String { "Tests/\(rawValue)Tests" }
-    var dependency: Target.Dependency { .target(name: rawValue) }
-}
+// MARK: - Network Module
 
-extension VarioqubProduct {
-    var product: Product {
-        .library(
-            name: rawValue,
-            targets: targets.map(\.name)
-        )
-    }
-}
+let network = Module(
+    name: Module.network,
+    dependencies: [
+        Module.utils,
+        SwiftLog.logging,
+    ],
+)
 
-extension ExternalDependency {
+// MARK: - ObjC Module
 
-    var packageName: String {
-        switch usedSource {
-        case .local:
-            return localPackageName
-        case .regular:
-            return regularPackageName
-        case .spmExternal:
-            return spmExternalPackageName
-        }
-    }
+let objc = Module(
+    name: Module.objc,
+    dependencies: [
+        Module.varioqub,
+    ],
+    hasTests: false,
+)
 
-    var packageDependency: Package.Dependency {
-        switch usedSource {
-        case .local:
-            return localPackageDependency
-        case .regular:
-            return regularPackageDependency
-        case .spmExternal:
-            return spmExternalPackageDependency
-        }
-    }
-}
+// MARK: - Utils Module
 
-extension Target {
+let utils = Module(
+    name: Module.utils,
+    dependencies: [],
+)
 
-    static func target(
-        varioqubTarget: VarioqubTarget,
-        resources: [Resource]? = nil,
-        dependencies: [VarioqubTarget] = [],
-        externalDependencies: [ExternalTargetDependency] = [],
-        includePrivacyManifest: Bool = true
-    ) -> Target {
-        var res: [Resource] = resources ?? []
-        if includePrivacyManifest {
-            res.append(.copy("Resources/PrivacyInfo.xcprivacy"))
-        }
-        return .target(
-            name: varioqubTarget.name,
-            dependencies: dependencies.map(\.dependency) + externalDependencies.map(\.targetDependency),
-            path: varioqubTarget.path,
-            resources: res,
-            swiftSettings: swiftCompilerSettings
-        )
-    }
+// MARK: - Package definition
 
-    static func testTarget(
-        varioqubTarget: VarioqubTarget,
-        dependencies: [VarioqubTarget] = [],
-        externalDependencies: [ExternalTargetDependency] = []
-    ) -> Target {
-        let allDeps = [varioqubTarget.dependency] + dependencies.map(\.dependency) + externalDependencies.map(\.targetDependency)
-        return .testTarget(
-            name: varioqubTarget.testsName,
-            dependencies: allDeps,
-            path: varioqubTarget.testsPath,
-            swiftSettings: swiftCompilerSettings
-        )
-    }
-}
-
-extension Package.Dependency {
-    static func package(id: String, version: DependencyVersion) -> Package.Dependency {
-        switch version {
-        case .exact(let v):
-            return .package(id: id, exact: v)
-        case .range(let r):
-            return .package(id: id, r)
-        }
-    }
-
-    static func package(url: String, version: DependencyVersion) -> Package.Dependency {
-        switch version {
-        case .exact(let v):
-            return .package(url: url, exact: v)
-        case .range(let r):
-            return .package(url: url, r)
-        }
-    }
-}
-
-enum DependencyVersion {
-    case exact(Version)
-    case range(Range<PackageDescription.Version>)
-}
-
-enum DependencySource {
-    case local
-    case regular
-    case spmExternal
-}
+let package = Package(
+    name: "Varioqub",
+    platforms: [
+        .iOS(.v13),
+        .tvOS(.v13),
+    ],
+    products: [
+        .library(name: "Varioqub", targets: [Module.varioqub, Module.network, Module.utils]),
+        .library(name: "VarioqubObjC", targets: [Module.varioqub, Module.network, Module.objc, Module.utils]),
+    ],
+    dependencies: [
+        SwiftLog.dependency,
+        Protobuf.dependency,
+    ],
+    targets: [
+        varioqub,
+        network,
+        objc,
+        utils,
+    ].flatMap { $0.toTargets() },
+)

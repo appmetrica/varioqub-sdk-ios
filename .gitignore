@@ -70,3 +70,6 @@ fastbuild
 .build
 .swiftpm/xcode/xcuserdata
 .swiftpm/package.xcworkspace/xcuserdata
+
+Package.resolved
+.spm-use-registry
