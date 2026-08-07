@@ -67,7 +67,6 @@ fastlane/screenshots
 fastbuild
 
 ### SPM ###
-.build
 .swiftpm/xcode/xcuserdata
 .swiftpm/package.xcworkspace/xcuserdata
 
