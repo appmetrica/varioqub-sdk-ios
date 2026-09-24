@@ -162,8 +162,8 @@ let utils = Module(
 let package = Package(
     name: "Varioqub",
     platforms: [
-        .iOS(.v13),
-        .tvOS(.v13),
+        .iOS(.v15),
+        .tvOS(.v15),
     ],
     products: [
         .library(name: "Varioqub", targets: [Module.varioqub, Module.network, Module.utils]),
